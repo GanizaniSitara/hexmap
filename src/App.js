@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import HexagonalClusterMap from './HexagonalClusterMap';
+import HexMap from './HexMap';
 
 function App() {
     return (
         <div className="App">
-            <HexagonalClusterMap />
+            <HexMap />
         </div>
     );
 }
