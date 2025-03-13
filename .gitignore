@@ -52,3 +52,6 @@ storybook-static/
 # Next.js files (if using Next.js)
 .next/
 out/
+
+# Ours
+legacy/

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 // Directly import our updated JSON with positioned apps
-import enterpriseData from './enterpriseData.json';
+import entityData from './data.json';
 
 class HexGrid {
     constructor(hexSize, width, height) {
@@ -208,7 +208,7 @@ const HexMap = () => {
 
         // Function to reset all hexagons to their original colors and clear connections
         const resetHexagonsAndConnections = () => {
-            enterpriseData.clusters.forEach(cluster => {
+            entityData.clusters.forEach(cluster => {
                 d3.select(`#cluster-${cluster.id}`)
                     .selectAll("path.hexagon")
                     .attr("fill", cluster.color);
@@ -320,7 +320,7 @@ const HexMap = () => {
         });
 
         // Debug log to check if data is loaded correctly
-        console.log("Loading data:", enterpriseData.clusters.length, "clusters");
+        console.log("Loading data:", entityData.clusters.length, "clusters");
 
         // Create a dedicated top-level group for outlines that will always be on top
         const topLevelOutlineGroup = g.append("g")
@@ -335,7 +335,7 @@ const HexMap = () => {
         const appCoordinates = {};
 
         // First pass: add cluster IDs and names to all applications for tracking
-        enterpriseData.clusters.forEach(cluster => {
+        entityData.clusters.forEach(cluster => {
             cluster.applications.forEach(app => {
                 app.clusterId = cluster.id;
                 app.clusterName = cluster.name;
@@ -346,7 +346,7 @@ const HexMap = () => {
         const clusterHexagons = {};
 
         // Draw clusters and hexagons
-        enterpriseData.clusters.forEach(cluster => {
+        entityData.clusters.forEach(cluster => {
             console.log(`Processing cluster ${cluster.id} with ${cluster.applications.length} apps`);
 
             // Check if any apps have absolute positions
@@ -1126,7 +1126,7 @@ const HexMap = () => {
             }}>
                 <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '14px' }}>Legend</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {enterpriseData.clusters.map(cluster => (
+                    {entityData.clusters.map(cluster => (
                         <div
                             key={cluster.id}
                             style={{
