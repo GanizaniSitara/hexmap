@@ -526,7 +526,6 @@ const HexMap = () => {
                     });
             });
 
-            // Add mouse events for hover effect with different behavior based on zoom level
             clusterGroup
                 .on("mouseover", function() {
                     const currentZoom = d3.zoomTransform(svg.node()).k;
@@ -535,48 +534,90 @@ const HexMap = () => {
                         // Get the stored hexagon coordinates
                         const data = d3.select(this).datum();
 
-                        // Clear any existing outlines
-                        topLevelOutlineGroup.selectAll("*").remove();
+                        // Clear any existing outlines with the same cluster ID
+                        const clusterId = cluster.id;
+                        topLevelOutlineGroup.selectAll(`*:not([data-cluster-id="${clusterId}"])`).remove();
 
-                        // Create outlines in the top-level group - but only for visible hexagons
-                        // FIX 2: Skip outlining hidden hexagons (those with circles at 0.7x zoom)
-                        data.hexCoords.forEach(coord => {
-                            // Check if this hexagon would be visible
-                            const isAbsolutePositioned = coord.app && coord.app.gridPosition;
-                            const wouldBeHidden = isAbsolutePositioned && currentZoom <= 0.7;
+                        // Only create outlines if they don't already exist for this cluster
+                        if (topLevelOutlineGroup.selectAll(`[data-cluster-id="${clusterId}"]`).empty()) {
+                            // Create outlines in the top-level group - but only for visible hexagons
+                            data.hexCoords.forEach(coord => {
+                                // Check if this hexagon would be visible
+                                const isAbsolutePositioned = coord.app && coord.app.gridPosition;
+                                const wouldBeHidden = isAbsolutePositioned && currentZoom <= 0.7;
 
-                            // Only draw outlines for visible hexagons
-                            if (!wouldBeHidden) {
-                                topLevelOutlineGroup.append("path")
-                                    .attr("transform", `translate(${coord.x},${coord.y})`)
-                                    .attr("d", hexGrid.hexagonPath(data.hexSize + 2))
-                                    .attr("fill", "none")
-                                    .attr("stroke", "#000000")
-                                    .attr("stroke-width", 2);
-                            }
-                        });
+                                // Only draw outlines for visible hexagons
+                                if (!wouldBeHidden) {
+                                    topLevelOutlineGroup.append("path")
+                                        .attr("transform", `translate(${coord.x},${coord.y})`)
+                                        .attr("d", hexGrid.hexagonPath(data.hexSize + 2))
+                                        .attr("fill", "none")
+                                        .attr("stroke", "#000000")
+                                        .attr("stroke-width", 2)
+                                        .attr("data-cluster-id", clusterId);
+                                }
+                            });
+                        }
 
                         // Show the top-level outlines immediately without transition
                         topLevelOutlineGroup.attr("opacity", 1);
                     }
                 })
-                .on("mouseout", function() {
+                .on("mouseout", function(event) {
                     const currentZoom = d3.zoomTransform(svg.node()).k;
                     if (currentZoom < 2.2) {
-                        // With a small delay to prevent flickering during mouseover events between clusters
-                        topLevelOutlineGroup.transition()
-                            .duration(100)
-                            .attr("opacity", 0)
-                            .on("end", function() {
-                                // Clear all elements after fade-out to ensure clean state
-                                topLevelOutlineGroup.selectAll("*").remove();
-                            });
+                        // Check if we're moving to another element within the same cluster
+                        const relatedTarget = event.relatedTarget;
+                        const currentClusterId = cluster.id;
+
+                        // Only remove outlines if moving outside this cluster
+                        if (!relatedTarget || !relatedTarget.closest(`#cluster-${currentClusterId}`)) {
+                            // With a small delay to prevent flickering during mouseover events between clusters
+                            const clusterId = cluster.id;
+
+                            timeoutIds.current.push(
+                                setTimeout(() => {
+                                    // Check if mouse is still outside this cluster
+                                    if (!document.querySelector(`#cluster-${clusterId}:hover`)) {
+                                        topLevelOutlineGroup.selectAll(`[data-cluster-id="${clusterId}"]`)
+                                            .transition()
+                                            .duration(100)
+                                            .attr("opacity", 0)
+                                            .on("end", function() {
+                                                // Remove only this cluster's outlines
+                                                d3.select(this).remove();
+                                            });
+                                    }
+                                }, 50)
+                            );
+                        }
                     }
                 })
-                .on("click", (event) => {
+                .on("click", function(event) {
+                    // Important: Stop propagation to prevent the background click handler from firing
                     event.stopPropagation();
+
+                    // Call the handler function directly with the cluster data
                     handleClusterClick(cluster);
                 });
+
+// Make sure the handleClusterClick function is defined before this code
+// It should be in the same scope as this event binding
+            const handleClusterClick = (cluster) => {
+                setSelectedCluster(cluster);
+                const clusterElement = document.getElementById(`cluster-${cluster.id}`);
+                if (clusterElement) {
+                    const bounds = clusterElement.getBBox();
+                    const x = bounds.x + bounds.width / 2;
+                    const y = bounds.y + bounds.height / 2;
+                    const scale = 2.2;
+                    const translate = [width / 2 - scale * x, height / 2 - scale * y];
+                    svg.transition()
+                        .duration(1000)
+                        .ease(d3.easeCubicInOut)
+                        .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
+                }
+            };
         });
 
         // IMPORTANT: Create the connections group AFTER all other elements
