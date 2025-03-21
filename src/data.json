@@ -1,0 +1,360 @@
+{
+  "clusters": [
+    {
+      "id": "finance",
+      "name": "Finance",
+      "color": "#4169E1",
+      "hexCount": 12,
+      "gridPosition": { "q": -5, "r": -3 },
+      "applications": [
+        {
+          "id": "app1",
+          "name": "Accounting System",
+          "description": "Core accounting platform",
+          "color": "#4169E1",
+          "gridPosition": { "q": -8, "r": -5 },
+          "connections": [
+            { "to": "app2", "type": "data-flow", "strength": "high" },
+            { "to": "app4", "type": "integration", "strength": "medium" },
+            { "to": "app10", "type": "api", "strength": "low" }
+          ]
+        },
+        {
+          "id": "app2",
+          "name": "Payroll",
+          "description": "Employee payment processing",
+          "color": "#4169E1",
+          "connections": [
+            { "to": "app3", "type": "data-flow", "strength": "medium" },
+            { "to": "app7", "type": "integration", "strength": "high" }
+          ]
+        },
+        {
+          "id": "app3",
+          "name": "Expense Tracking",
+          "description": "Business expense management",
+          "color": "#4169E1",
+          "connections": [
+            { "to": "app4", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app4",
+          "name": "Financial Reporting",
+          "description": "Regulatory reporting system",
+          "color": "#4169E1",
+          "gridPosition": { "q": -2, "r": -1 },
+          "connections": [
+            { "to": "app5", "type": "data-flow", "strength": "high" },
+            { "to": "app28", "type": "api", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app5",
+          "name": "Budgeting",
+          "description": "Annual budget planning",
+          "color": "#4169E1",
+          "connections": [
+            { "to": "app13", "type": "integration", "strength": "low" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hr",
+      "name": "HR",
+      "color": "#DC143C",
+      "hexCount": 8,
+      "gridPosition": { "q": 5, "r": 1 },
+      "applications": [
+        {
+          "id": "app6",
+          "name": "Recruiting",
+          "description": "Applicant tracking system",
+          "color": "#DC143C",
+          "connections": [
+            { "to": "app8", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app7",
+          "name": "Benefits",
+          "description": "Employee benefits management",
+          "color": "#DC143C",
+          "gridPosition": { "q": 8, "r": 3 },
+          "connections": [
+            { "to": "app2", "type": "integration", "strength": "high" },
+            { "to": "app6", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app8",
+          "name": "Time Tracking",
+          "description": "Employee time management",
+          "color": "#DC143C",
+          "connections": [
+            { "to": "app9", "type": "data-flow", "strength": "low" },
+            { "to": "app30", "type": "api", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app9",
+          "name": "Learning",
+          "description": "Employee training platform",
+          "color": "#DC143C",
+          "connections": [
+            { "to": "app29", "type": "integration", "strength": "medium" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "name": "Sales",
+      "color": "#32CD32",
+      "hexCount": 10,
+      "gridPosition": { "q": 10, "r": -3 },
+      "applications": [
+        {
+          "id": "app10",
+          "name": "CRM",
+          "description": "Customer relationship management",
+          "color": "#32CD32",
+          "gridPosition": { "q": 0, "r": 0 },
+          "connections": [
+            { "to": "app11", "type": "data-flow", "strength": "high" },
+            { "to": "app12", "type": "integration", "strength": "high" },
+            { "to": "app22", "type": "api", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app11",
+          "name": "Quote System",
+          "description": "Sales quote generation",
+          "color": "#32CD32",
+          "connections": [
+            { "to": "app12", "type": "data-flow", "strength": "high" }
+          ]
+        },
+        {
+          "id": "app12",
+          "name": "Contract Management",
+          "description": "Customer contract system",
+          "color": "#32CD32",
+          "connections": [
+            { "to": "app13", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app13",
+          "name": "Sales Analytics",
+          "description": "Performance tracking",
+          "color": "#32CD32",
+          "gridPosition": { "q": 7, "r": -6 },
+          "connections": [
+            { "to": "app14", "type": "data-flow", "strength": "medium" },
+            { "to": "app28", "type": "integration", "strength": "high" }
+          ]
+        },
+        {
+          "id": "app14",
+          "name": "Territory Planning",
+          "description": "Sales territory management",
+          "color": "#32CD32",
+          "connections": []
+        }
+      ]
+    },
+    {
+      "id": "it",
+      "name": "IT",
+      "color": "#9932CC",
+      "hexCount": 14,
+      "gridPosition": { "q": -5, "r": 4 },
+      "applications": [
+        {
+          "id": "app15",
+          "name": "Service Desk",
+          "description": "IT support ticketing",
+          "color": "#9932CC",
+          "connections": [
+            { "to": "app16", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app16",
+          "name": "Asset Management",
+          "description": "Hardware/software tracking",
+          "color": "#9932CC",
+          "connections": [
+            { "to": "app17", "type": "integration", "strength": "low" }
+          ]
+        },
+        {
+          "id": "app17",
+          "name": "Network Monitoring",
+          "description": "Infrastructure monitoring",
+          "color": "#9932CC",
+          "gridPosition": { "q": -10, "r": 5 },
+          "connections": [
+            { "to": "app20", "type": "data-flow", "strength": "high" }
+          ]
+        },
+        {
+          "id": "app18",
+          "name": "CI/CD Platform",
+          "description": "Continuous integration",
+          "color": "#9932CC",
+          "connections": [
+            { "to": "app19", "type": "integration", "strength": "high" },
+            { "to": "app20", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app19",
+          "name": "Cloud Management",
+          "description": "Cloud resource management",
+          "color": "#9932CC",
+          "connections": [
+            { "to": "app20", "type": "integration", "strength": "high" }
+          ]
+        },
+        {
+          "id": "app20",
+          "name": "Security",
+          "description": "Security monitoring tools",
+          "color": "#9932CC",
+          "gridPosition": { "q": -2, "r": 6 },
+          "connections": []
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "color": "#FF8C00",
+      "hexCount": 9,
+      "gridPosition": { "q": 5, "r": 6 },
+      "applications": [
+        {
+          "id": "app21",
+          "name": "Content Management",
+          "description": "Web content system",
+          "color": "#FF8C00",
+          "gridPosition": { "q": 3, "r": 8 },
+          "connections": [
+            { "to": "app23", "type": "integration", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app22",
+          "name": "Marketing Automation",
+          "description": "Campaign management",
+          "color": "#FF8C00",
+          "connections": [
+            { "to": "app23", "type": "data-flow", "strength": "high" },
+            { "to": "app24", "type": "data-flow", "strength": "high" },
+            { "to": "app10", "type": "api", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app23",
+          "name": "Social Media",
+          "description": "Social media management",
+          "color": "#FF8C00",
+          "connections": [
+            { "to": "app24", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app24",
+          "name": "Analytics",
+          "description": "Marketing performance tracking",
+          "color": "#FF8C00",
+          "connections": [
+            { "to": "app28", "type": "integration", "strength": "medium" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "emerging",
+      "name": "Emerging Tech",
+      "color": "#1E90FF",
+      "hexCount": 6,
+      "gridPosition": { "q": -10, "r": -6 },
+      "applications": [
+        {
+          "id": "app25",
+          "name": "AI Research",
+          "description": "Cutting-edge AI development",
+          "color": "#1E90FF",
+          "gridPosition": { "q": -15, "r": -10 },
+          "connections": [
+            { "to": "app26", "type": "data-flow", "strength": "high" }
+          ]
+        },
+        {
+          "id": "app26",
+          "name": "Quantum Computing",
+          "description": "Quantum research platform",
+          "color": "#1E90FF",
+          "connections": [
+            { "to": "app27", "type": "integration", "strength": "low" }
+          ]
+        },
+        {
+          "id": "app27",
+          "name": "Blockchain Innovation",
+          "description": "Distributed ledger technologies",
+          "color": "#1E90FF",
+          "connections": []
+        },
+        {
+          "id": "app31",
+          "name": "Collision Test",
+          "description": "App to test collision detection",
+          "color": "#1E90FF",
+          "gridPosition": { "q": -15, "r": -10 },
+          "connections": []
+        }
+      ]
+    },
+    {
+      "id": "crossfunctional",
+      "name": "Cross-Functional",
+      "color": "#008080",
+      "hexCount": 4,
+      "gridPosition": { "q": 0, "r": -8 },
+      "applications": [
+        {
+          "id": "app28",
+          "name": "Enterprise Analytics",
+          "description": "Cross-department insights",
+          "color": "#8A2BE2",
+          "gridPosition": { "q": 2, "r": -10 },
+          "connections": [
+            { "to": "app29", "type": "data-flow", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app29",
+          "name": "Knowledge Base",
+          "description": "Shared company documentation",
+          "color": "#8A2BE2",
+          "gridPosition": { "q": -1, "r": -6 },
+          "connections": [
+            { "to": "app30", "type": "integration", "strength": "medium" }
+          ]
+        },
+        {
+          "id": "app30",
+          "name": "Project Management",
+          "description": "Enterprise project tracking",
+          "color": "#8A2BE2",
+          "connections": []
+        }
+      ]
+    }
+  ]
+}

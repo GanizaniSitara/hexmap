@@ -1,176 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-// Directly import our updated JSON with positioned apps
 import entityData from './data.json';
-
-class HexGrid {
-    constructor(hexSize, width, height) {
-        this.hexSize = hexSize;
-        this.width = width;
-        this.height = height;
-    }
-
-    // Conversion from hex grid coordinates (odd-r horizontal) to pixel coordinates
-    gridToPixel(q, r) {
-        // Center the grid by offsetting based on half the width and height
-        const centerOffsetX = this.width / 2;
-        const centerOffsetY = this.height / 2;
-
-        const x = centerOffsetX + this.hexSize * Math.sqrt(3) * (q + 0.5 * (r & 1));
-        const y = centerOffsetY + this.hexSize * 3/2 * r;
-        return { x, y };
-    }
-
-    // Conversion from pixel coordinates back to hex grid coordinates
-    pixelToGrid(x, y) {
-        // Remove the center offsets
-        const centerOffsetX = this.width / 2;
-        const centerOffsetY = this.height / 2;
-
-        const adjustedX = x - centerOffsetX;
-        const adjustedY = y - centerOffsetY;
-
-        const q = (adjustedX * Math.sqrt(3)/3 - adjustedY / 3) / this.hexSize;
-        const r = adjustedY * 2/3 / this.hexSize;
-        return {
-            q: Math.round(q),
-            r: Math.round(r)
-        };
-    }
-
-    // Generate hexagon path
-    hexagonPath(size) {
-        const points = [];
-        for (let i = 0; i < 6; i++) {
-            const angle = Math.PI / 2 + i * (Math.PI / 3);
-            points.push([size * Math.cos(angle), size * Math.sin(angle)]);
-        }
-        return d3.line()(points) + "Z";
-    }
-
-    // Generate hex coordinates for a cluster based on grid position
-    // Modified to handle absolute positioning of individual apps
-    generateHexCoords(count, gridQ, gridR, clusterApps = [], occupiedPositions = {}) {
-        const coords = [];
-        const horizontalSpacing = this.hexSize * Math.sqrt(3);
-        const verticalSpacing = 1.5 * this.hexSize;
-
-        // Fixed width for clusters (as requested)
-        const CLUSTER_WIDTH = 5;
-
-        // Split apps into positioned and unpositioned
-        const positionedApps = [];
-        const unpositionedApps = [];
-
-        // Check if clusterApps is defined and has elements
-        if (clusterApps && clusterApps.length > 0) {
-            clusterApps.forEach(app => {
-                if (app.gridPosition && typeof app.gridPosition.q === 'number' && typeof app.gridPosition.r === 'number') {
-                    // This app has a valid absolute position
-                    positionedApps.push(app);
-                } else {
-                    // This app will be part of the cluster layout
-                    unpositionedApps.push(app);
-                }
-            });
-
-            // Position apps with absolute coordinates
-            positionedApps.forEach(app => {
-                const gridPos = `${app.gridPosition.q},${app.gridPosition.r}`;
-
-                // Check for collision
-                if (occupiedPositions[gridPos]) {
-                    console.warn(`Collision detected: App "${app.name}" at position ${gridPos} collides with "${occupiedPositions[gridPos].name}" from cluster "${occupiedPositions[gridPos].clusterName}"`);
-                    // Still add it to the visualization but mark it as conflicted
-                    app.hasCollision = true;
-                    app.collidesWith = {
-                        name: occupiedPositions[gridPos].name,
-                        clusterId: occupiedPositions[gridPos].clusterId,
-                        clusterName: occupiedPositions[gridPos].clusterName
-                    };
-                } else {
-                    // Mark this position as occupied
-                    occupiedPositions[gridPos] = {
-                        name: app.name,
-                        clusterId: app.clusterId || 'unknown',
-                        clusterName: app.clusterName || 'Unknown Cluster'
-                    };
-                }
-
-                const pixelPos = this.gridToPixel(app.gridPosition.q, app.gridPosition.r);
-                coords.push({
-                    x: pixelPos.x,
-                    y: pixelPos.y,
-                    appName: app.name,
-                    app: app,
-                    gridPosition: app.gridPosition,
-                    hasCollision: app.hasCollision,
-                    collidesWith: app.collidesWith
-                });
-            });
-        }
-
-        // Calculate how many remaining hexagons need to be positioned in the cluster layout
-        const remainingCount = count - positionedApps.length;
-
-        if (remainingCount > 0) {
-            // Handle the remaining apps without absolute positions using the cluster layout
-            const baseCoords = this.gridToPixel(gridQ, gridR);
-
-            // Force width to be exactly CLUSTER_WIDTH (5) as requested
-            const cols = CLUSTER_WIDTH;
-            const rows = Math.ceil(remainingCount / cols);
-            let hexIndex = 0;
-
-            // Try to place unpositioned hexagons, avoiding collisions
-            for (let row = 0; row < rows * 2; row++) { // Expand search area if needed
-                for (let col = 0; col < cols; col++) { // Strictly limit to CLUSTER_WIDTH columns
-                    if (hexIndex >= remainingCount) break;
-
-                    // Calculate staggered grid position
-                    const offsetX = (row % 2 === 1) ? horizontalSpacing / 2 : 0;
-                    const x = baseCoords.x + (col * horizontalSpacing) + offsetX;
-                    const y = baseCoords.y + (row * verticalSpacing);
-
-                    // Convert back to grid coordinates to check for collisions
-                    const gridPos = this.pixelToGrid(x, y);
-                    const gridPosKey = `${gridPos.q},${gridPos.r}`;
-
-                    // If position is already occupied, skip it
-                    if (occupiedPositions[gridPosKey]) {
-                        continue;
-                    }
-
-                    // Position is free, use it
-                    const appName = hexIndex < unpositionedApps.length ? unpositionedApps[hexIndex].name : '';
-                    const app = hexIndex < unpositionedApps.length ? unpositionedApps[hexIndex] : null;
-
-                    if (app) {
-                        // Mark this position as occupied
-                        occupiedPositions[gridPosKey] = {
-                            name: appName,
-                            clusterId: app.clusterId || 'unknown',
-                            clusterName: app.clusterName || 'Unknown Cluster'
-                        };
-                    }
-
-                    coords.push({
-                        x,
-                        y,
-                        appName,
-                        app,
-                        gridPosition: gridPos,
-                        hasCollision: false
-                    });
-
-                    hexIndex++;
-                }
-            }
-        }
-
-        return coords;
-    }
-}
+import HexGrid from './HexGrid';
+import { getLighterColor } from './connectionUtils';
+import ConnectionRenderer from './ConnectionRenderer';
+import {
+    CollisionNotification,
+    DetailPanel,
+    AppInfoPanel,
+    ZoomStatus,
+    ConnectionLegend,
+    ClusterLegend
+} from './ui/components';
 
 const HexMap = () => {
     const [selectedCluster, setSelectedCluster] = useState(null);
@@ -178,14 +19,173 @@ const HexMap = () => {
     const [currentZoomLevel, setCurrentZoomLevel] = useState(1);
     const [hoveredApp, setHoveredApp] = useState(null);
     const [appConnections, setAppConnections] = useState([]);
-    // Array to store timeout IDs
-    const timeoutIds = [];
+
+    // Refs
+    const timeoutIds = useRef([]);
     const svgRef = useRef(null);
     const zoomRef = useRef(null);
     const connectionsGroupRef = useRef(null);
-
-    // Create a ref to store app coordinates for drawing connections
     const appCoordinatesRef = useRef({});
+
+    // SIMPLIFIED APPROACH:
+    // Function to update visibility of absolutely positioned hexagons based on zoom level
+    const updateAbsoluteHexagonsVisibility = (zoomLevel) => {
+        console.log(`Updating hexagon visibility for zoom level: ${zoomLevel}`);
+
+        // Simple direct selection of all hexagons with circles (indicator dots)
+        const circleHexagons = d3.selectAll(".hexagon-group").filter(function() {
+            return d3.select(this).select("circle").size() > 0;
+        });
+
+        console.log(`Found ${circleHexagons.size()} absolutely positioned hexagons with circles`);
+
+        // Set visibility based on zoom level
+        circleHexagons.each(function() {
+            const hexGroup = d3.select(this);
+
+            // Simply hide at 0.7x zoom, show at other levels
+            if (zoomLevel <= 0.7) {
+                hexGroup.style("opacity", 0);
+                console.log(`Hiding hexagon ${hexGroup.attr("id")}`);
+            } else {
+                hexGroup.style("opacity", 1);
+            }
+        });
+
+        // After updating hexagon visibility, update cluster label positions
+        updateClusterLabelPositions(zoomLevel);
+    };
+
+    // Function to update cluster label positions based on zoom level
+    const updateClusterLabelPositions = (zoomLevel) => {
+        if (!entityData || !entityData.clusters) return;
+
+        console.log(`Updating cluster label positions for zoom level: ${zoomLevel}`);
+
+        entityData.clusters.forEach(cluster => {
+            const clusterGroup = d3.select(`#cluster-${cluster.id}`);
+            if (!clusterGroup.node()) return; // Skip if cluster doesn't exist in DOM
+
+            // Get the cluster label element
+            const clusterLabel = clusterGroup.select("text.cluster-label");
+            if (!clusterLabel.node()) {
+                console.warn(`No label found for cluster ${cluster.id}`);
+                return; // Skip if label doesn't exist
+            }
+
+            if (zoomLevel <= 0.7) {
+                // At 0.7x zoom, center the label within the cluster mass
+                // First, compute the centroid of all hexagons in this cluster
+                const allHexGroups = clusterGroup.selectAll(".hexagon-group").nodes();
+                if (allHexGroups.length === 0) return;
+
+                // Calculate the center of mass for visible hexagons
+                let sumX = 0, sumY = 0, count = 0;
+                allHexGroups.forEach(hexNode => {
+                    const hexGroup = d3.select(hexNode);
+
+                    // Only include visible hexagons
+                    if (hexGroup.style("opacity") !== "0") {
+                        try {
+                            const transform = hexGroup.attr("transform");
+                            if (!transform) return; // Skip if transform is missing
+
+                            // Extract translate values from the transform attribute
+                            const translateMatch = /translate\(([^,]+),([^)]+)\)/.exec(transform);
+                            if (translateMatch && translateMatch.length >= 3) {
+                                const x = parseFloat(translateMatch[1]);
+                                const y = parseFloat(translateMatch[2]);
+
+                                // Only count if we got valid numbers
+                                if (!isNaN(x) && !isNaN(y)) {
+                                    sumX += x;
+                                    sumY += y;
+                                    count++;
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Error processing hexagon:", e);
+                        }
+                    }
+                });
+
+                // Guard against division by zero
+                if (count > 0) {
+                    const centerX = sumX / count;
+                    const centerY = sumY / count;
+
+                    console.log(`Cluster ${cluster.id}: calculated center at (${centerX}, ${centerY}) from ${count} hexagons`);
+
+                    // Store original position if not already stored
+                    if (!clusterLabel.attr("data-original-x")) {
+                        clusterLabel.attr("data-original-x", clusterLabel.attr("x"));
+                        clusterLabel.attr("data-original-y", clusterLabel.attr("y"));
+                        console.log(`Stored original position: (${clusterLabel.attr("x")}, ${clusterLabel.attr("y")})`);
+                    }
+
+                    // Move label to cluster center with transition
+                    clusterLabel.transition()
+                        .duration(300)
+                        .attr("x", centerX)
+                        .attr("y", centerY + 6) // Move 6px lower than center
+                        .attr("font-size", "18px") // Make labels bigger
+                        .attr("font-weight", "bold");
+
+                    // Ensure labels are always on top by moving them to the end of their parent
+                    const labelParent = clusterLabel.node().parentNode;
+                    labelParent.appendChild(clusterLabel.node());
+
+                    console.log(`Moving label to (${centerX}, ${centerY})`);
+                } else {
+                    console.warn(`No visible hexagons found for cluster ${cluster.id}`);
+                }
+            } else {
+                // At 1.0x zoom or higher, return to original position if stored
+                const originalX = clusterLabel.attr("data-original-x");
+                const originalY = clusterLabel.attr("data-original-y");
+
+                if (originalX && originalY) {
+                    console.log(`Returning label to original position: (${originalX}, ${originalY})`);
+                    clusterLabel.transition()
+                        .duration(300)
+                        .attr("x", originalX)
+                        .attr("y", originalY)
+                        .attr("font-size", "14px") // Original size
+                        .attr("font-weight", "bold");
+                } else {
+                    console.warn(`No original position found for cluster ${cluster.id}`);
+                }
+            }
+        });
+    };
+
+    // Function to reset all hexagons to their original colors
+    const resetHexagonsAndConnections = () => {
+        if (entityData && entityData.clusters) {
+            entityData.clusters.forEach(cluster => {
+                const clusterGroup = d3.select(`#cluster-${cluster.id}`);
+                if (clusterGroup.node()) { // Check if the element exists
+                    clusterGroup.selectAll("path.hexagon")
+                        .attr("fill", cluster.color);
+                }
+            });
+        }
+
+        // Clear hovered app
+        setHoveredApp(null);
+
+        // Clear connections
+        setAppConnections([]);
+
+        // Immediately clear the connections group
+        if (connectionsGroupRef.current) {
+            connectionsGroupRef.current.selectAll("*").remove();
+        }
+
+        // Clear any pending timeouts
+        timeoutIds.current.forEach(id => clearTimeout(id));
+        timeoutIds.current.length = 0;
+    };
 
     useEffect(() => {
         if (!svgRef.current) return;
@@ -195,40 +195,16 @@ const HexMap = () => {
         // Use the full browser window dimensions
         const width = window.innerWidth;
         const height = window.innerHeight;
-        const discreteLevels = [1, 2.2, 4];
+        const discreteLevels = [0.7, 1, 2.2, 4];
 
         // Initialize with first zoom level
-        setCurrentZoomLevel(discreteLevels[0]);
+        setCurrentZoomLevel(discreteLevels[1]); // Start at 1.0
 
         // Calculate hexSize so that hexagon width is exactly 22px (width = size * sqrt(3))
         const hexSize = 22 / Math.sqrt(3);
         const hexGrid = new HexGrid(hexSize, width, height);
 
         const g = svg.append("g");
-
-        // Function to reset all hexagons to their original colors and clear connections
-        const resetHexagonsAndConnections = () => {
-            entityData.clusters.forEach(cluster => {
-                d3.select(`#cluster-${cluster.id}`)
-                    .selectAll("path.hexagon")
-                    .attr("fill", cluster.color);
-            });
-
-            // Clear hovered app
-            setHoveredApp(null);
-
-            // Clear connections
-            setAppConnections([]);
-
-            // Immediately clear the connections group
-            if (connectionsGroupRef.current) {
-                connectionsGroupRef.current.selectAll("*").remove();
-            }
-
-            // Clear any pending timeouts
-            timeoutIds.forEach(id => clearTimeout(id));
-            timeoutIds.length = 0;
-        };
 
         // Background rectangle covering a bit more than the full view to allow panning
         g.append("rect")
@@ -244,7 +220,7 @@ const HexMap = () => {
                     svg.transition()
                         .duration(1000)
                         .ease(d3.easeCubicOut)
-                        .call(zoomRef.current.transform, d3.zoomIdentity.scale(discreteLevels[0]));
+                        .call(zoomRef.current.transform, d3.zoomIdentity.scale(discreteLevels[1]));
                 }
             });
 
@@ -258,8 +234,16 @@ const HexMap = () => {
                 const previousZoomLevel = currentZoomLevel;
                 setCurrentZoomLevel(event.transform.k);
 
-                // Hide outlines when zoomed in past threshold
+                // Update absolutely positioned hexagons visibility
+                updateAbsoluteHexagonsVisibility(event.transform.k);
+
+                // Always manage outlines properly at all zoom levels
                 if (event.transform.k >= 2.2) {
+                    // Hide outlines when zoomed in past threshold
+                    topLevelOutlineGroup.attr("opacity", 0);
+                } else if (previousZoomLevel !== event.transform.k) {
+                    // Clear any outlines when changing zoom levels (not just crossing 2.2)
+                    topLevelOutlineGroup.selectAll("*").remove();
                     topLevelOutlineGroup.attr("opacity", 0);
                 }
 
@@ -270,7 +254,7 @@ const HexMap = () => {
             });
         zoomRef.current = zoom;
         svg.call(zoom);
-        svg.call(zoom.transform, d3.zoomIdentity.scale(discreteLevels[0]));
+        svg.call(zoom.transform, d3.zoomIdentity.scale(discreteLevels[1]));
 
         // Custom discrete zoom on wheel events
         svg.on("wheel", (event) => {
@@ -298,15 +282,27 @@ const HexMap = () => {
 
             // Check if we're crossing the zoom threshold
             const crossingThresholdDown = currentScale >= 2.2 && newScale < 2.2;
+            // Add check for transitions between any zoom levels
+            const changingZoomLevel = currentScale !== newScale;
 
             // Transition to new zoom level
             svg.transition()
                 .duration(300)
                 .ease(d3.easeCubicInOut)
-                .call(zoom.transform, d3.zoomIdentity.translate(newX, newY).scale(newScale));
+                .call(zoom.transform, d3.zoomIdentity.translate(newX, newY).scale(newScale))
+                .on("start", () => {
+                    // Clear outlines when changing between any zoom levels
+                    if (changingZoomLevel) {
+                        topLevelOutlineGroup.selectAll("*").remove();
+                        topLevelOutlineGroup.attr("opacity", 0);
+                    }
+                });
 
             // Update the zoom level state when changed via wheel
             setCurrentZoomLevel(newScale);
+
+            // Apply absolute hexagon visibility update
+            updateAbsoluteHexagonsVisibility(newScale);
 
             // Hide outlines when zoomed in past threshold
             if (newScale >= 2.2) {
@@ -375,6 +371,7 @@ const HexMap = () => {
                 .attr("font-size", "14px")
                 .attr("font-weight", "bold")
                 .attr("pointer-events", "none")
+                .attr("class", "cluster-label")
                 .text(cluster.name);
 
             const hexCoords = hexGrid.generateHexCoords(
@@ -429,6 +426,14 @@ const HexMap = () => {
                         .attr("r", 3)
                         .attr("fill", coord.hasCollision ? "#ff0000" : "#fff");
 
+                    // SIMPLIFIED: Mark as absolute positioned
+                    hexGroup.classed("absolute-positioned", true);
+
+                    // If starting at zoom level 0.7, hide these initially
+                    if (currentZoomLevel <= 0.7) {
+                        hexGroup.style("opacity", 0);
+                    }
+
                     // If there's a collision, add it to our list with complete info
                     if (coord.hasCollision && coord.app.collidesWith) {
                         collisions.push({
@@ -444,20 +449,6 @@ const HexMap = () => {
                 // Store the original color for highlighting
                 const originalColor = cluster.color;
                 // Calculate a lighter version of the color for hover effect
-                const getLighterColor = (hexColor) => {
-                    // Parse the hex color
-                    let r = parseInt(hexColor.slice(1, 3), 16);
-                    let g = parseInt(hexColor.slice(3, 5), 16);
-                    let b = parseInt(hexColor.slice(5, 7), 16);
-
-                    // Lighten the color (increase RGB values)
-                    r = Math.min(255, r + 40);
-                    g = Math.min(255, g + 40);
-                    b = Math.min(255, b + 40);
-
-                    // Convert back to hex
-                    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-                };
                 const lighterColor = getLighterColor(originalColor);
 
                 // Add hover effects for individual hexagons (only active when zoomed in)
@@ -529,8 +520,8 @@ const HexMap = () => {
                             }
 
                             // Clear any pending timeouts
-                            timeoutIds.forEach(id => clearTimeout(id));
-                            timeoutIds.length = 0;
+                            timeoutIds.current.forEach(id => clearTimeout(id));
+                            timeoutIds.current.length = 0;
                         }
                     });
             });
@@ -547,14 +538,22 @@ const HexMap = () => {
                         // Clear any existing outlines
                         topLevelOutlineGroup.selectAll("*").remove();
 
-                        // Create outlines in the top-level group that always appears above everything else
+                        // Create outlines in the top-level group - but only for visible hexagons
+                        // FIX 2: Skip outlining hidden hexagons (those with circles at 0.7x zoom)
                         data.hexCoords.forEach(coord => {
-                            topLevelOutlineGroup.append("path")
-                                .attr("transform", `translate(${coord.x},${coord.y})`)
-                                .attr("d", hexGrid.hexagonPath(data.hexSize + 2))
-                                .attr("fill", "none")
-                                .attr("stroke", "#000000")
-                                .attr("stroke-width", 2);
+                            // Check if this hexagon would be visible
+                            const isAbsolutePositioned = coord.app && coord.app.gridPosition;
+                            const wouldBeHidden = isAbsolutePositioned && currentZoom <= 0.7;
+
+                            // Only draw outlines for visible hexagons
+                            if (!wouldBeHidden) {
+                                topLevelOutlineGroup.append("path")
+                                    .attr("transform", `translate(${coord.x},${coord.y})`)
+                                    .attr("d", hexGrid.hexagonPath(data.hexSize + 2))
+                                    .attr("fill", "none")
+                                    .attr("stroke", "#000000")
+                                    .attr("stroke-width", 2);
+                            }
                         });
 
                         // Show the top-level outlines immediately without transition
@@ -564,8 +563,14 @@ const HexMap = () => {
                 .on("mouseout", function() {
                     const currentZoom = d3.zoomTransform(svg.node()).k;
                     if (currentZoom < 2.2) {
-                        // Hide the top-level outlines immediately without transition
-                        topLevelOutlineGroup.attr("opacity", 0);
+                        // With a small delay to prevent flickering during mouseover events between clusters
+                        topLevelOutlineGroup.transition()
+                            .duration(100)
+                            .attr("opacity", 0)
+                            .on("end", function() {
+                                // Clear all elements after fade-out to ensure clean state
+                                topLevelOutlineGroup.selectAll("*").remove();
+                            });
                     }
                 })
                 .on("click", (event) => {
@@ -604,653 +609,180 @@ const HexMap = () => {
                     .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
             }
         };
+
+        // Initial call to set up hexagon visibility based on starting zoom level
+        updateAbsoluteHexagonsVisibility(discreteLevels[1]);
     }, []);
 
-    // Effect to draw connections when appConnections state changes
+    // Debug functions - keeping these for troubleshooting
     useEffect(() => {
-        // First, clear all existing connections
-        if (connectionsGroupRef.current) {
-            connectionsGroupRef.current.selectAll("*").remove();
-        }
+        // Add debugging utilities
+        window.analyzeClusterSizes = function() {
+            console.log("=== ANALYZING CLUSTER SIZES ===");
 
-        // If there are no connections to draw, just return
-        if (!connectionsGroupRef.current || appConnections.length === 0) return;
+            // Get all cluster groups
+            const clusters = {};
+            document.querySelectorAll('[id^="cluster-"]').forEach(clusterGroup => {
+                const clusterId = clusterGroup.id;
+                const hexagons = clusterGroup.querySelectorAll('.hexagon-group');
+                const visibleHexagons = Array.from(hexagons).filter(hex =>
+                    window.getComputedStyle(hex).opacity !== "0" &&
+                    window.getComputedStyle(hex).display !== "none"
+                );
 
-        // Force connections group to be the last child so it appears on top
-        const parent = connectionsGroupRef.current.node().parentNode;
-        parent.appendChild(connectionsGroupRef.current.node());
+                // Get hexagons with circles (absolute positioned)
+                const hexagonsWithCircles = Array.from(hexagons).filter(hex =>
+                    hex.querySelector('circle')
+                );
 
-        // Set pointer-events to none for the entire connections group to ensure no mouse interactions
-        connectionsGroupRef.current.attr("pointer-events", "none");
+                clusters[clusterId] = {
+                    name: clusterGroup.querySelector('text.cluster-label')?.textContent || clusterId,
+                    totalHexagons: hexagons.length,
+                    visibleHexagons: visibleHexagons.length,
+                    absoluteHexagons: hexagonsWithCircles.length,
+                    element: clusterGroup,
+                    opacity: window.getComputedStyle(clusterGroup).opacity,
+                    display: window.getComputedStyle(clusterGroup).display,
+                    transform: clusterGroup.getAttribute('transform')
+                };
+            });
 
-        // Define the custom connection path
-        const generateConnectionPath = (source, target, type) => {
-            const dx = target.x - source.x;
-            const dy = target.y - source.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            console.table(clusters);
 
-            // Calculate control points for a curved path
-            // Adjust curve height based on connection type
-            let curveHeight;
-            switch (type) {
-                case "data-flow":
-                    curveHeight = distance * 0.3; // High curve
-                    break;
-                case "api":
-                    curveHeight = distance * 0.15; // Low curve
-                    break;
-                case "integration":
-                default:
-                    curveHeight = distance * 0.2; // Medium curve
-                    break;
-            }
+            // Check the specific behavior of small clusters
+            console.log("=== SMALL CLUSTER BEHAVIOR ===");
+            Object.keys(clusters).forEach(clusterId => {
+                const cluster = clusters[clusterId];
 
-            // Midpoint of the straight line between source and target
-            const mpx = (source.x + target.x) / 2;
-            const mpy = (source.y + target.y) / 2;
+                if (cluster.totalHexagons < 4) {
+                    console.log(`Small cluster detected: ${cluster.name} with ${cluster.totalHexagons} hexagons`);
 
-            // Direction vector, normalized
-            const dirX = dx / distance;
-            const dirY = dy / distance;
+                    // Check if the whole cluster is getting hidden
+                    if (cluster.opacity === "0" || cluster.display === "none") {
+                        console.warn(`The entire cluster ${cluster.name} is hidden!`);
+                    }
 
-            // Perpendicular direction vector (rotate 90 degrees)
-            const perpX = -dirY;
-            const perpY = dirX;
+                    // Get detailed information about each hexagon in this small cluster
+                    const hexagons = cluster.element.querySelectorAll('.hexagon-group');
+                    const hexagonDetails = Array.from(hexagons).map(hex => ({
+                        id: hex.id,
+                        hasCircle: !!hex.querySelector('circle'),
+                        opacity: window.getComputedStyle(hex).opacity,
+                        display: window.getComputedStyle(hex).display,
+                        transform: hex.getAttribute('transform'),
+                        // Try to extract position
+                        position: hex.getAttribute('transform')?.match(/translate\(([^,]+),([^)]+)\)/)?.slice(1).map(parseFloat) || []
+                    }));
 
-            // Control point is midpoint shifted perpendicularly
-            const cpx = mpx + perpX * curveHeight;
-            const cpy = mpy + perpY * curveHeight;
-
-            // Create the SVG path string using quadratic curve
-            return `M ${source.x} ${source.y} Q ${cpx} ${cpy}, ${target.x} ${target.y}`;
-        };
-
-        // Define connection line styles based on strength
-        const getConnectionStyles = (strength) => {
-            switch (strength) {
-                case "high":
-                    return {
-                        strokeWidth: 3,
-                        dashArray: "none"
-                    };
-                case "medium":
-                    return {
-                        strokeWidth: 2,
-                        dashArray: "none"
-                    };
-                case "low":
-                    return {
-                        strokeWidth: 1.5,
-                        dashArray: "5,3"
-                    };
-                default:
-                    return {
-                        strokeWidth: 2,
-                        dashArray: "none"
-                    };
-            }
-        };
-
-        // Draw each connection
-        appConnections.forEach((connection, index) => {
-            const { source, target, type, strength } = connection;
-            const path = generateConnectionPath(source, target, type);
-            const styles = getConnectionStyles(strength);
-
-            // Create the gradient for the path (or use solid color if same cluster)
-            const sameColorConnection = source.color === target.color;
-            let connectionColor;
-            let connectionPath;
-
-            if (sameColorConnection) {
-                // Use dark grey for connections between nodes of the same color
-                connectionColor = "#444444"; // Dark grey
-
-                // Draw the main path with solid color
-                connectionPath = connectionsGroupRef.current.append("path")
-                    .attr("d", path)
-                    .attr("fill", "none")
-                    .attr("stroke", connectionColor)
-                    .attr("stroke-width", styles.strokeWidth)
-                    .attr("stroke-dasharray", styles.dashArray)
-                    .attr("opacity", 0)
-                    .attr("pointer-events", "none"); // Prevent mouse events on connections
-
-                // Animate the path
-                connectionPath.transition()
-                    .duration(600)
-                    .attr("opacity", 0.7)
-                    .attr("stroke-dashoffset", 0)
-                    .ease(d3.easeQuadOut);
-            } else {
-                // Use gradient for connections between different colored nodes
-                const gradientId = `connection-gradient-${index}`;
-                connectionsGroupRef.current.append("defs")
-                    .append("linearGradient")
-                    .attr("id", gradientId)
-                    .attr("gradientUnits", "userSpaceOnUse")
-                    .attr("x1", source.x)
-                    .attr("y1", source.y)
-                    .attr("x2", target.x)
-                    .attr("y2", target.y)
-                    .selectAll("stop")
-                    .data([
-                        { offset: "10%", color: source.color },
-                        { offset: "90%", color: target.color }
-                    ])
-                    .enter().append("stop")
-                    .attr("offset", d => d.offset)
-                    .attr("stop-color", d => d.color);
-
-                // Draw the main path with gradient
-                connectionPath = connectionsGroupRef.current.append("path")
-                    .attr("d", path)
-                    .attr("fill", "none")
-                    .attr("stroke", `url(#${gradientId})`)
-                    .attr("stroke-width", styles.strokeWidth)
-                    .attr("stroke-dasharray", styles.dashArray)
-                    .attr("opacity", 0)
-                    .attr("pointer-events", "none"); // Prevent mouse events on connections
-
-                // Animate the path
-                connectionPath.transition()
-                    .duration(600)
-                    .attr("opacity", 0.7)
-                    .attr("stroke-dashoffset", 0)
-                    .ease(d3.easeQuadOut);
-            }
-
-            // Add animated projectile particle
-            const projectile = connectionsGroupRef.current.append("circle")
-                .attr("r", 4)
-                .attr("fill", sameColorConnection ? "#666666" : source.color)
-                .attr("opacity", 0)
-                .attr("pointer-events", "none"); // Prevent mouse events on particles
-
-            // Animate the projectile along the path
-            const animateProjectile = () => {
-                // Check if the connections group still exists and has content
-                if (!connectionsGroupRef.current || !connectionPath.node()) {
-                    return; // Exit if connections are gone
+                    console.log(`Detailed hexagon info for ${cluster.name}:`, hexagonDetails);
                 }
+            });
 
-                const totalLength = connectionPath.node().getTotalLength();
+            // Check for specific issues with cross-functional cluster
+            const crossFunctionalCluster = Object.values(clusters).find(c =>
+                c.name.includes("Cross") || c.name.includes("cross")
+            );
 
-                projectile
-                    .attr("opacity", 0)
-                    .transition()
-                    .duration(2000)
-                    .ease(d3.easeQuadInOut)
-                    .attrTween("transform", () => {
-                        return (t) => {
-                            // Additional safety check
-                            if (!connectionPath.node()) return "translate(0,0)";
-                            const p = connectionPath.node().getPointAtLength(t * totalLength);
-                            return `translate(${p.x},${p.y})`;
-                        };
-                    })
-                    .attr("opacity", 1)
-                    .transition()
-                    .duration(300)
-                    .attr("opacity", 0)
-                    .on("end", () => {
-                        // Only continue if the DOM elements still exist
-                        if (connectionsGroupRef.current &&
-                            connectionPath.node() &&
-                            document.body.contains(connectionPath.node())) {
-                            animateProjectile();
+            if (crossFunctionalCluster) {
+                console.log("=== CROSS-FUNCTIONAL CLUSTER ANALYSIS ===");
+                console.log(crossFunctionalCluster);
+
+                // Detailed hexagon inspection
+                const cfHexagons = crossFunctionalCluster.element.querySelectorAll('.hexagon-group');
+
+                console.log(`Cross-Functional has ${cfHexagons.length} hexagons`);
+
+                // Get D3 data for these hexagons
+                const cfHexagonData = Array.from(cfHexagons).map(hex => {
+                    const d3hex = d3.select(hex);
+                    return {
+                        id: hex.id,
+                        hasCircle: !!hex.querySelector('circle'),
+                        data: d3hex.datum(),
+                        opacity: window.getComputedStyle(hex).opacity,
+                        classed: {
+                            absolutePositioned: d3hex.classed('absolute-positioned'),
+                            hexagonGroup: d3hex.classed('hexagon-group')
                         }
-                    });
+                    };
+                });
+
+                console.log("Cross-Functional hexagon data:", cfHexagonData);
+            }
+
+            return "Cluster analysis complete - check console for details";
+        };
+
+        // Function to hide all hexagons with circles directly
+        window.forceHideCircleHexagons = function() {
+            console.log("Force hiding all hexagons with circles");
+
+            // Direct DOM approach
+            document.querySelectorAll('.hexagon-group circle').forEach(circle => {
+                const hexGroup = circle.closest('.hexagon-group');
+                if (hexGroup) {
+                    hexGroup.style.cssText += "; opacity: 0 !important; visibility: hidden !important;";
+                    console.log(`Forced hide hexagon: ${hexGroup.id}`);
+                }
+            });
+
+            // Also try d3 approach
+            d3.selectAll('.hexagon-group').filter(function() {
+                return d3.select(this).select('circle').size() > 0;
+            }).style('opacity', 0);
+
+            return "Force hiding complete";
+        };
+
+        // Add debugging buttons
+        setTimeout(() => {
+            const analyzeButton = document.createElement("button");
+            analyzeButton.innerHTML = "Debug to Console";
+            analyzeButton.style.cssText = `
+                position: fixed; 
+                top: 10px; 
+                left: 50%; 
+                transform: translateX(-50%);
+                z-index: 9999;
+                padding: 8px 16px;
+                background: #2196F3;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-right: 10px;
+            `;
+
+            analyzeButton.onclick = function() {
+                window.analyzeClusterSizes();
             };
 
-            // Start the animation after a short delay
-            const timeoutId = setTimeout(animateProjectile, index * 300);
+            document.body.appendChild(analyzeButton);
 
-            // Store timeout ID for cleanup
-            timeoutIds.push(timeoutId);
-        });
-    }, [appConnections]);
+            // Add force hide button
+            // const forceHideButton = document.createElement("button");
+            // forceHideButton.innerHTML = "Force Hide All Circles";
+            // forceHideButton.style.cssText = `
+            //     position: fixed;
+            //     top: 10px;
+            //     left: calc(50% + 130px);
+            //     transform: translateX(-50%);
+            //     z-index: 9999;
+            //     padding: 8px 16px;
+            //     background: #F44336;
+            //     color: white;
+            //     border: none;
+            //     border-radius: 4px;
+            //     cursor: pointer;
+            // `;
 
-    const renderCollisionNotification = () => {
-        if (collisionsDetected.length === 0) return null;
-
-        return (
-            <div style={{
-                position: 'fixed',
-                top: '16px',
-                left: '16px',
-                backgroundColor: '#FEF2F2',
-                borderLeft: '4px solid #EF4444',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                borderRadius: '4px',
-                padding: '12px',
-                maxWidth: '400px',
-                zIndex: 1000
-            }}>
-                <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '14px', color: '#B91C1C' }}>
-                    ⚠️ {collisionsDetected.length} position collision{collisionsDetected.length > 1 ? 's' : ''} detected
-                </div>
-                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                    {collisionsDetected.map((collision, idx) => (
-                        <div key={idx} style={{
-                            fontSize: '12px',
-                            borderBottom: '1px solid #FECACA',
-                            paddingBottom: '6px',
-                            marginBottom: '6px'
-                        }}>
-                            <strong style={{ color: '#7F1D1D' }}>{collision.app}</strong>
-                            <div style={{ fontSize: '11px' }}>
-                                Cluster: {collision.cluster} | Position: {collision.position}
-                            </div>
-                            <div style={{ fontSize: '11px', color: '#DC2626' }}>
-                                Collides with: {collision.collidesWithApp} ({collision.collidesWithCluster})
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
-    const renderDetailPanel = () => {
-        if (!selectedCluster) return null;
-        return (
-            <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 w-64 max-h-96 overflow-y-auto z-10">
-                <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-lg font-bold">{selectedCluster.name}</h3>
-                    <button
-                        className="text-gray-500 hover:text-gray-700"
-                        onClick={() => {
-                            setSelectedCluster(null);
-                            d3.select(svgRef.current)
-                                .transition()
-                                .duration(1000)
-                                .ease(d3.easeCubicOut)
-                                .call(zoomRef.current.transform, d3.zoomIdentity.scale(0.5));
-                        }}
-                    >
-                        ✕
-                    </button>
-                </div>
-                <div className="text-sm text-gray-600 mb-3">
-                    {selectedCluster.applications.length} applications
-                </div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {selectedCluster.applications.map(app => (
-                        <li key={app.id} className="border-b pb-2 mb-2">
-                            <div className="font-medium">{app.name}</div>
-                            <div className="text-xs text-gray-500">{app.description}</div>
-                            {app.gridPosition && (
-                                <div className="text-xs text-blue-500">
-                                    Custom position: q={app.gridPosition.q}, r={app.gridPosition.r}
-                                </div>
-                            )}
-                            {app.connections && app.connections.length > 0 && (
-                                <div className="text-xs text-purple-500 mt-1">
-                                    Connections: {app.connections.length}
-                                </div>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    };
-
-    // Render the app info panel when hovering over a hexagon at zoom level >= 2.2
-    const renderAppInfoPanel = () => {
-        if (!hoveredApp || currentZoomLevel < 2.2) return null;
-
-        const connectionCount = hoveredApp.connections ? hoveredApp.connections.length : 0;
-
-        return (
-            <div style={{
-                position: 'fixed',
-                top: '16px',
-                right: '16px',
-                backgroundColor: 'white',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                borderRadius: '8px',
-                padding: '12px',
-                maxWidth: '300px',
-                zIndex: 1000,
-                borderLeft: `4px solid ${hoveredApp.clusterColor || '#888'}`
-            }}>
-                <div style={{
-                    fontWeight: 600,
-                    marginBottom: '6px',
-                    fontSize: '16px',
-                    borderBottom: '1px solid #eee',
-                    paddingBottom: '6px'
-                }}>
-                    {hoveredApp.name || 'Unnamed Application'}
-                </div>
-
-                {hoveredApp.description && (
-                    <div style={{ fontSize: '13px', color: '#444', marginBottom: '8px' }}>
-                        {hoveredApp.description}
-                    </div>
-                )}
-
-                <div style={{ fontSize: '12px', color: '#666' }}>
-                    <div style={{ marginBottom: '4px' }}>
-                        <span style={{ fontWeight: 500 }}>Cluster: </span>
-                        {hoveredApp.clusterName}
-                    </div>
-
-                    {hoveredApp.gridPosition && (
-                        <div style={{ marginBottom: '4px' }}>
-                            <span style={{ fontWeight: 500 }}>Position: </span>
-                            q={hoveredApp.gridPosition.q}, r={hoveredApp.gridPosition.r}
-                        </div>
-                    )}
-
-                    {connectionCount > 0 && (
-                        <div style={{
-                            marginTop: '8px',
-                            color: '#6d28d9',
-                            fontSize: '12px',
-                            backgroundColor: '#f5f3ff',
-                            padding: '6px',
-                            borderRadius: '4px'
-                        }}>
-                            <div style={{ fontWeight: 600, marginBottom: '4px' }}>Connections: {connectionCount}</div>
-                            <div style={{ maxHeight: '100px', overflowY: 'auto' }}>
-                                {hoveredApp.connections.map((conn, idx) => {
-                                    const targetApp = appCoordinatesRef.current[conn.to]?.app;
-                                    return targetApp ? (
-                                        <div key={idx} style={{
-                                            fontSize: '11px',
-                                            padding: '3px 0',
-                                            borderBottom: idx < hoveredApp.connections.length - 1 ? '1px solid #e5e7eb' : 'none'
-                                        }}>
-                                            <span style={{ fontWeight: 500 }}>{targetApp.name}</span>
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '6px',
-                                                fontSize: '10px',
-                                                color: '#6b7280'
-                                            }}>
-                                                <span style={{
-                                                    padding: '1px 4px',
-                                                    backgroundColor: getTypeColor(conn.type),
-                                                    color: 'white',
-                                                    borderRadius: '3px',
-                                                    textTransform: 'capitalize'
-                                                }}>{conn.type}</span>
-                                                <span style={{
-                                                    textTransform: 'capitalize'
-                                                }}>{conn.strength} strength</span>
-                                            </div>
-                                        </div>
-                                    ) : null;
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    {hoveredApp.hasCollision && (
-                        <div style={{
-                            marginTop: '8px',
-                            color: '#B91C1C',
-                            fontSize: '11px',
-                            backgroundColor: '#FEF2F2',
-                            padding: '4px 6px',
-                            borderRadius: '4px'
-                        }}>
-                            <span style={{ fontWeight: 600 }}>⚠️ Position Conflict:</span>
-                            <div>Collides with {hoveredApp.collidesWith?.name} ({hoveredApp.collidesWith?.clusterName})</div>
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
-    // Helper function to get color for connection type
-    const getTypeColor = (type) => {
-        switch(type) {
-            case 'data-flow':
-                return '#2563eb'; // Blue
-            case 'api':
-                return '#65a30d'; // Green
-            case 'integration':
-                return '#9333ea'; // Purple
-            default:
-                return '#6b7280'; // Gray
-        }
-    };
-
-    // Render the zoom level status overlay
-    const renderZoomStatus = () => {
-        return (
-            <div style={{
-                position: 'fixed',
-                right: '16px',
-                bottom: '16px',
-                backgroundColor: 'white',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                borderRadius: '8px',
-                padding: '12px',
-                zIndex: 1000,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
-            }}>
-                <div style={{ fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>
-                    Zoom Level
-                </div>
-                <div style={{
-                    fontSize: '16px',
-                    fontWeight: '500',
-                    color: '#3B82F6',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        <line x1="11" y1="8" x2="11" y2="14"></line>
-                        <line x1="8" y1="11" x2="14" y2="11"></line>
-                    </svg>
-                    {currentZoomLevel.toFixed(1)}x
-                </div>
-                <div style={{ fontSize: '10px', color: '#6B7280', marginTop: '4px' }}>
-                    {currentZoomLevel >= 2.2 ?
-                        "Hover over hexagons to see connections" :
-                        "Hover over clusters to see outlines"}
-                </div>
-            </div>
-        );
-    };
-
-    const renderLegend = () => {
-        if (selectedCluster) {
-            return (
-                <div style={{
-                    position: 'fixed',
-                    left: '16px',
-                    bottom: '16px',
-                    backgroundColor: 'white',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    maxWidth: '300px',
-                    maxHeight: '300px',
-                    overflowY: 'auto',
-                    zIndex: 1000
-                }}>
-                    <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '14px' }}>
-                        {selectedCluster.name} Applications
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        {selectedCluster.applications.map(app => (
-                            <div key={app.id} style={{ fontSize: '12px', borderBottom: '1px solid #eee', paddingBottom: '6px' }}>
-                                <div style={{ fontWeight: 500 }}>{app.name}</div>
-                                <div style={{ fontSize: '10px', color: '#666' }}>{app.description}</div>
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    marginTop: '3px'
-                                }}>
-                                    {app.gridPosition && (
-                                        <div style={{ fontSize: '10px', color: '#3b82f6' }}>
-                                            Custom position
-                                        </div>
-                                    )}
-                                    {app.connections && app.connections.length > 0 && (
-                                        <div style={{ fontSize: '10px', color: '#8b5cf6' }}>
-                                            {app.connections.length} connection{app.connections.length !== 1 ? 's' : ''}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-        }
-        return (
-            <div style={{
-                position: 'fixed',
-                left: '16px',
-                bottom: '16px',
-                backgroundColor: 'white',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                borderRadius: '8px',
-                padding: '12px',
-                maxWidth: '200px',
-                zIndex: 1000
-            }}>
-                <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '14px' }}>Legend</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {entityData.clusters.map(cluster => (
-                        <div
-                            key={cluster.id}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                cursor: 'pointer',
-                                padding: '3px',
-                                borderRadius: '4px',
-                                backgroundColor: selectedCluster?.id === cluster.id ? '#f0f0f0' : 'transparent'
-                            }}
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                const svg = d3.select(svgRef.current);
-                                const targetCluster = document.getElementById(`cluster-${cluster.id}`);
-                                if (targetCluster) {
-                                    setSelectedCluster(cluster);
-                                    const bounds = targetCluster.getBBox();
-                                    const x = bounds.x + bounds.width / 2;
-                                    const y = bounds.y + bounds.height / 2;
-                                    const scale = 2.2;
-                                    const translate = [window.innerWidth / 2 - scale * x, window.innerHeight / 2 - scale * y];
-                                    svg.transition()
-                                        .duration(1000)
-                                        .ease(d3.easeCubicInOut)
-                                        .call(zoomRef.current.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
-                                }
-                            }}
-                        >
-                            <div style={{
-                                width: '12px',
-                                height: '12px',
-                                backgroundColor: cluster.color,
-                                marginRight: '8px',
-                                borderRadius: '3px',
-                                border: '1px solid rgba(255,255,255,0.5)'
-                            }} />
-                            <span style={{ fontSize: '12px' }}>{cluster.name}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
-    // Render connection legend when connections are visible
-    const renderConnectionLegend = () => {
-        if (appConnections.length === 0 || currentZoomLevel < 2.2) return null;
-
-        return (
-            <div style={{
-                position: 'fixed',
-                right: '16px',
-                bottom: '170px', // Increased spacing above the zoom level
-                backgroundColor: 'white',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                borderRadius: '8px',
-                padding: '12px',
-                zIndex: 1000,
-                width: '160px' // Fixed width for consistency
-            }}>
-                <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '14px' }}>
-                    Connection Types
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{
-                            width: '30px',
-                            height: '3px',
-                            backgroundColor: getTypeColor('data-flow')
-                        }}></div>
-                        <span style={{ fontSize: '12px' }}>Data Flow</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{
-                            width: '30px',
-                            height: '3px',
-                            backgroundColor: getTypeColor('api')
-                        }}></div>
-                        <span style={{ fontSize: '12px' }}>API</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{
-                            width: '30px',
-                            height: '3px',
-                            backgroundColor: getTypeColor('integration')
-                        }}></div>
-                        <span style={{ fontSize: '12px' }}>Integration</span>
-                    </div>
-                </div>
-                <div style={{ borderTop: '1px solid #eee', marginTop: '8px', paddingTop: '8px' }}>
-                    <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '14px' }}>
-                        Strength
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{
-                                width: '30px',
-                                height: '3px',
-                                backgroundColor: '#888'
-                            }}></div>
-                            <span style={{ fontSize: '12px' }}>High</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{
-                                width: '30px',
-                                height: '2px',
-                                backgroundColor: '#888'
-                            }}></div>
-                            <span style={{ fontSize: '12px' }}>Medium</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{
-                                width: '30px',
-                                height: '1.5px',
-                                backgroundColor: '#888',
-                                strokeDasharray: '5,3'
-                            }}></div>
-                            <span style={{ fontSize: '12px' }}>Low (dashed)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
+            // forceHideButton.onclick = function() {
+            //     window.forceHideCircleHexagons();
+            // };
+            //
+            // document.body.appendChild(forceHideButton);
+        }, 1000);
+    }, []);
 
     return (
         <div className="relative">
@@ -1260,12 +792,45 @@ const HexMap = () => {
                 viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}
                 className="bg-white"
             />
-            {renderDetailPanel()}
-            {renderLegend()}
-            {renderCollisionNotification()}
-            {renderZoomStatus()}
-            {renderAppInfoPanel()}
-            {renderConnectionLegend()}
+
+            <ConnectionRenderer
+                appConnections={appConnections}
+                connectionsGroupRef={connectionsGroupRef}
+                timeoutIds={timeoutIds}
+            />
+
+            <DetailPanel
+                selectedCluster={selectedCluster}
+                svgRef={svgRef}
+                zoomRef={zoomRef}
+            />
+
+            <ClusterLegend
+                entityData={entityData}
+                selectedCluster={selectedCluster}
+                setSelectedCluster={setSelectedCluster}
+                svgRef={svgRef}
+                zoomRef={zoomRef}
+            />
+
+            <CollisionNotification
+                collisionsDetected={collisionsDetected}
+            />
+
+            <ZoomStatus
+                currentZoomLevel={currentZoomLevel}
+            />
+
+            <AppInfoPanel
+                hoveredApp={hoveredApp}
+                currentZoomLevel={currentZoomLevel}
+                appCoordinatesRef={appCoordinatesRef}
+            />
+
+            <ConnectionLegend
+                appConnections={appConnections}
+                currentZoomLevel={currentZoomLevel}
+            />
         </div>
     );
 };
