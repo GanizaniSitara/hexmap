@@ -100,7 +100,7 @@ const ConnectionRenderer = ({
                 .attr("opacity", 0)
                 .attr("pointer-events", "none"); // Prevent mouse events on particles
 
-            // Animate the projectile along the path
+            // Animate the projectile along the path with normalized speed
             const animateProjectile = () => {
                 // Check if the connections group still exists and has content
                 if (!connectionsGroupRef.current || !connectionPath.node()) {
@@ -109,11 +109,16 @@ const ConnectionRenderer = ({
 
                 const totalLength = connectionPath.node().getTotalLength();
 
+                // Calculate duration based on path length to normalize speed
+                // Use a base speed (pixels per millisecond) and adjust duration accordingly
+                const baseSpeed = 0.25; // pixels per millisecond
+                const duration = Math.max(1000, totalLength / baseSpeed); // at least 1 second, scaled by length
+
                 projectile
                     .attr("opacity", 0)
                     .transition()
-                    .duration(2000)
-                    .ease(d3.easeQuadInOut)
+                    .duration(duration) // Now scaled to path length
+                    .ease(d3.easeLinear) // Use linear easing for consistent speed
                     .attrTween("transform", () => {
                         return (t) => {
                             // Additional safety check
@@ -136,8 +141,9 @@ const ConnectionRenderer = ({
                     });
             };
 
-            // Start the animation after a short delay
-            const timeoutId = setTimeout(animateProjectile, index * 300);
+            // Start all animations with a consistent delay pattern
+            // Use a fixed delay between animations rather than scaling by index
+            const timeoutId = setTimeout(animateProjectile, index * 200);
 
             // Store timeout ID for cleanup
             timeoutIds.current.push(timeoutId);
