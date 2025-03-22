@@ -30,6 +30,12 @@ export default class TooltipManager {
 
         // Track tooltip positions to avoid collisions
         this.tooltipPositions = {};
+
+        // Constants for positioning
+        this.VERTICAL_SPACING = 28; // Pixels between tooltip centers
+        this.MIN_GAP = 20; // Minimum gap required to place a tooltip
+        this.BASE_OFFSET_Y = -5; // Base offset from the hexagon - much closer now
+        this.TRANSFORM_OFFSET = "translate(-50%, -100%)"; // Transform to position tooltip properly
     }
 
     updateZoomLevel(zoomLevel) {
@@ -53,54 +59,114 @@ export default class TooltipManager {
         this.tooltip.style.opacity = '0';
     }
 
-    // Improved function to find non-colliding vertical position
-    findNonCollidingPosition(targetId, baseY, width) {
-        // Start with a default offset
-        let offsetY = 0;
+    // Analyze the space around each hexagon and calculate optimal tooltip positions
+    calculateOptimalPositions(connections) {
+        // Map to store the optimal position for each target ID
+        const positions = {};
 
-        // Check if any existing tooltip is in a similar horizontal position
-        const targetX = parseInt(this.tooltipPositions[targetId]?.x || 0);
+        // Extract all target hexagons
+        const targetElements = connections.map(conn => {
+            const el = document.getElementById(`hex-${conn.target.id}`);
+            return { id: conn.target.id, element: el, conn };
+        }).filter(item => item.element);
 
-        // Look at all existing tooltip positions
-        const occupiedPositions = Object.values(this.tooltipPositions);
+        // First, analyze available space for each hex
+        targetElements.forEach(target => {
+            const rect = target.element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
 
-        // Sort existing tooltips by Y position (to find nearest gap)
-        const sortedPositions = occupiedPositions.filter(pos => {
-            // Only consider tooltips that could horizontally overlap
-            // Consider tooltips within a horizontal range that might overlap
-            const horizontalDistance = Math.abs(targetX - parseInt(pos.x));
-            return horizontalDistance < width / 1.5; // If tooltips are closer than half their width
-        }).sort((a, b) => parseInt(a.y) - parseInt(b.y));
+            // Use the top of the hexagon but move down to place tooltip closer
+            const centerY = rect.top - this.BASE_OFFSET_Y;
 
-        // Find a vertical position with enough space
-        const minSpacing = 30; // Minimum pixel spacing between tooltips
+            // Check for neighboring hexagons in proximity
+            const neighbors = targetElements.filter(other => other.id !== target.id);
 
-        if (sortedPositions.length > 0) {
-            // Start with an offset above the target
-            offsetY = -25;
+            let foundCollision = false;
 
-            // Try positions with increasing vertical offset until we find a non-colliding spot
-            for (let attempt = 0; attempt < 10; attempt++) { // Limit attempts to prevent infinite loop
-                const proposedY = baseY + offsetY;
+            neighbors.forEach(neighbor => {
+                const neighborRect = neighbor.element.getBoundingClientRect();
+                const neighborCenterX = neighborRect.left + neighborRect.width / 2;
 
-                // Check if this position collides with any existing tooltip
-                const hasCollision = sortedPositions.some(pos => {
-                    const existingY = parseInt(pos.y);
-                    return Math.abs(existingY - proposedY) < minSpacing;
+                // Horizontal distance between hexagons
+                const horizontalDistance = Math.abs(centerX - neighborCenterX);
+
+                // Only consider neighbors that are horizontally close enough to cause conflicts
+                if (horizontalDistance < 70) {
+                    foundCollision = true;
+                }
+            });
+
+            // Store the calculated position
+            positions[target.id] = {
+                x: centerX,
+                y: centerY,
+                available: !foundCollision
+            };
+        });
+
+        // Second pass: if multiple hexagons are in proximity, stack their tooltips
+        // Find groups of hexagons that are close horizontally
+        const horizontalGroups = [];
+
+        // Simple grouping algorithm - can be improved for more complex scenarios
+        targetElements.forEach(target => {
+            const rect = target.element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+
+            // Find if this target fits in an existing group
+            let foundGroup = false;
+            for (let group of horizontalGroups) {
+                // Check if target is horizontally close to any hex in the group
+                const isClose = group.some(groupMember => {
+                    const memberElement = document.getElementById(`hex-${groupMember.id}`);
+                    if (!memberElement) return false;
+
+                    const memberRect = memberElement.getBoundingClientRect();
+                    const memberX = memberRect.left + memberRect.width / 2;
+                    return Math.abs(centerX - memberX) < 70;
                 });
 
-                if (!hasCollision) {
-                    break; // Found a good position
+                if (isClose) {
+                    group.push(target);
+                    foundGroup = true;
+                    break;
                 }
-
-                // Try the next position (alternate above and below with increasing distance)
-                offsetY = (attempt % 2 === 0) ?
-                    Math.abs(offsetY) + minSpacing :
-                    -(Math.abs(offsetY) + minSpacing);
             }
-        }
 
-        return offsetY;
+            // If no group found, create a new one
+            if (!foundGroup) {
+                horizontalGroups.push([target]);
+            }
+        });
+
+        // For each group, stack tooltips vertically if needed
+        horizontalGroups.forEach(group => {
+            if (group.length <= 1) return; // No need to stack single tooltips
+
+            // Sort by vertical position (top to bottom)
+            group.sort((a, b) => {
+                const aRect = a.element.getBoundingClientRect();
+                const bRect = b.element.getBoundingClientRect();
+                return aRect.top - bRect.top;
+            });
+
+            // Stack tooltips with proper spacing
+            group.forEach((target, index) => {
+                if (index === 0) return; // Keep the first one as is
+
+                const prevTarget = group[index - 1];
+                const prevPosition = positions[prevTarget.id];
+
+                // Calculate new position based on previous tooltip
+                positions[target.id] = {
+                    x: positions[target.id].x,
+                    y: prevPosition.y + this.VERTICAL_SPACING,
+                    available: false // Mark as moved due to stacking
+                };
+            });
+        });
+
+        return positions;
     }
 
     // Show tooltips on connected hexagons
@@ -110,11 +176,11 @@ export default class TooltipManager {
         // Clear any existing connection tooltips
         this.hideAllConnectionTooltips();
 
-        // Reset position tracking
-        this.tooltipPositions = {};
+        // Calculate optimal positions for all tooltips
+        const optimalPositions = this.calculateOptimalPositions(connections);
 
         // Create new tooltips for each connection
-        connections.forEach((connection, index) => {
+        connections.forEach((connection) => {
             const targetId = connection.target.id;
             const targetApp = appCoordinatesRef.current[targetId]?.app;
 
@@ -138,32 +204,20 @@ export default class TooltipManager {
         border: 1px solid rgba(255, 255, 255, 0.3);
         opacity: 0;
         transition: opacity 0.15s ease;
-        transform: translate(-50%, -150%);
+        transform: ${this.TRANSFORM_OFFSET};
       `;
 
-            // Position the tooltip above the target hexagon
+            // Position the tooltip using calculated optimal position
             const hexElement = document.getElementById(`hex-${targetId}`);
-            if (hexElement) {
-                const rect = hexElement.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top;
-                const tooltipWidth = targetApp.name.length * 7 + 20; // Estimate width based on text length
-
-                // Find a position that doesn't collide with other tooltips
-                const offsetY = this.findNonCollidingPosition(targetId, centerY, tooltipWidth);
-
-                // Store this tooltip's position for future collision detection
-                this.tooltipPositions[targetId] = {
-                    x: centerX,
-                    y: centerY + offsetY
-                };
+            if (hexElement && optimalPositions[targetId]) {
+                const position = optimalPositions[targetId];
 
                 tooltip.textContent = targetApp.name;
-                tooltip.style.left = `${centerX}px`;
-                tooltip.style.top = `${centerY + offsetY}px`;
+                tooltip.style.left = `${position.x}px`;
+                tooltip.style.top = `${position.y}px`;
                 tooltip.style.opacity = '1';
 
-                // IMPORTANT: Use the TARGET color for the border, not the source
+                // IMPORTANT: Use the TARGET color for the border
                 const borderColor = connection.target.color;
                 tooltip.style.borderLeft = `3px solid ${borderColor}`;
 
