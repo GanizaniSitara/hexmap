@@ -57,6 +57,7 @@ const HexMap = () => {
         // Hide tooltip
         if (tooltipManagerRef.current) {
             tooltipManagerRef.current.hide();
+            tooltipManagerRef.current.hideAllConnectionTooltips(); // Fixed function name
         }
 
         // Immediately clear the connections group

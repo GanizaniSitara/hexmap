@@ -188,7 +188,13 @@ class HexGridRenderer {
             appCoordinates[coord.app.id] = {
                 x: coord.x,
                 y: coord.y,
-                app: coord.app
+                app: {
+                    ...coord.app,
+                    // Store cluster information with the app
+                    clusterId: cluster.id,
+                    clusterName: cluster.name,
+                    color: cluster.color
+                }
             };
         }
 
@@ -265,18 +271,21 @@ class HexGridRenderer {
                             const connections = [];
                             coord.app.connections.forEach(connection => {
                                 if (appCoordinates[connection.to]) {
+                                    const targetData = appCoordinates[connection.to];
                                     connections.push({
                                         source: {
                                             x: coord.x,
                                             y: coord.y,
                                             id: coord.app.id,
-                                            color: cluster.color
+                                            color: cluster.color,
+                                            name: coord.app.name
                                         },
                                         target: {
-                                            x: appCoordinates[connection.to].x,
-                                            y: appCoordinates[connection.to].y,
+                                            x: targetData.x,
+                                            y: targetData.y,
                                             id: connection.to,
-                                            color: appCoordinates[connection.to].app.color
+                                            color: targetData.app.color,
+                                            name: targetData.app.name
                                         },
                                         type: connection.type,
                                         strength: connection.strength
@@ -284,7 +293,13 @@ class HexGridRenderer {
                                 }
                             });
 
+                            // Show connections on the map
                             this.setAppConnections(connections);
+
+                            // Show tooltips on the connected hexagons
+                            if (this.tooltipManager) {
+                                this.tooltipManager.showConnectionTooltips(connections, this.appCoordinatesRef);
+                            }
                         } else {
                             // Clear connections if this app has none
                             this.setAppConnections([]);
@@ -317,6 +332,11 @@ class HexGridRenderer {
 
                     // Hide tooltip
                     this.tooltipManager.hide();
+
+                    // Hide connection tooltips
+                    if (this.tooltipManager) {
+                        this.tooltipManager.hideAllConnectionTooltips();
+                    }
 
                     // Forcefully and immediately clear all connections and related state
                     this.setHoveredApp(null);
