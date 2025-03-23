@@ -6,13 +6,15 @@ class ZoomHandler {
                     mainGroup,
                     setCurrentZoomLevel,
                     resetHexagonsAndConnections,
-                    topLevelOutlineGroup
+                    topLevelOutlineGroup,
+                    setHoveredCluster
                 }) {
         this.svg = svg;
         this.mainGroup = mainGroup;
         this.setCurrentZoomLevel = setCurrentZoomLevel;
         this.resetHexagonsAndConnections = resetHexagonsAndConnections;
         this.topLevelOutlineGroup = topLevelOutlineGroup;
+        this.setHoveredCluster = setHoveredCluster;
 
         // Constants
         this.width = window.innerWidth;
@@ -65,6 +67,11 @@ class ZoomHandler {
         if (previousZoomLevel >= 2.2 && event.transform.k < 2.2) {
             this.resetHexagonsAndConnections();
         }
+
+        // Clear hovered cluster when changing zoom levels
+        if (previousZoomLevel !== event.transform.k && this.setHoveredCluster) {
+            this.setHoveredCluster(null);
+        }
     }
 
     handleWheel(event) {
@@ -100,6 +107,11 @@ class ZoomHandler {
         const crossingThresholdDown = currentScale >= 2.2 && newScale < 2.2;
         // Add check for transitions between any zoom levels
         const changingZoomLevel = currentScale !== newScale;
+
+        // Clear hovered cluster when changing zoom levels
+        if (changingZoomLevel && this.setHoveredCluster) {
+            this.setHoveredCluster(null);
+        }
 
         // Transition to new zoom level
         this.svg.transition()

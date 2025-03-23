@@ -6,6 +6,13 @@
       "color": "#4169E1",
       "hexCount": 12,
       "gridPosition": { "q": -5, "r": -3 },
+      "department": "Financial Services",
+      "leadName": "Sarah Johnson",
+      "leadEmail": "sjohnson@example.com",
+      "budgetStatus": "On track",
+      "priority": "High",
+      "lastUpdated": "2025-03-15",
+      "description": "Core financial systems and applications that support accounting, payroll, and financial reporting functions.",
       "applications": [
         {
           "id": "app1",
@@ -66,6 +73,13 @@
       "color": "#DC143C",
       "hexCount": 8,
       "gridPosition": { "q": 5, "r": 1 },
+      "department": "Human Resources",
+      "leadName": "Michael Chen",
+      "leadEmail": "mchen@example.com",
+      "budgetStatus": "Under review",
+      "priority": "Medium",
+      "lastUpdated": "2025-03-10",
+      "description": "Applications supporting employee lifecycle management, from recruitment to retirement.",
       "applications": [
         {
           "id": "app6",
@@ -114,6 +128,13 @@
       "color": "#32CD32",
       "hexCount": 10,
       "gridPosition": { "q": 10, "r": -3 },
+      "department": "Revenue Operations",
+      "leadName": "Jessica Martinez",
+      "leadEmail": "jmartinez@example.com",
+      "budgetStatus": "Exceeding targets",
+      "priority": "High",
+      "lastUpdated": "2025-03-18",
+      "description": "Customer-facing applications that support the sales pipeline, lead generation, and contract management.",
       "applications": [
         {
           "id": "app10",
@@ -171,6 +192,13 @@
       "color": "#9932CC",
       "hexCount": 14,
       "gridPosition": { "q": -5, "r": 4 },
+      "department": "Information Technology",
+      "leadName": "David Wilson",
+      "leadEmail": "dwilson@example.com",
+      "budgetStatus": "Over budget",
+      "priority": "Critical",
+      "lastUpdated": "2025-03-20",
+      "description": "Core infrastructure and IT management applications that support the entire organization.",
       "applications": [
         {
           "id": "app15",
@@ -235,6 +263,13 @@
       "color": "#FF8C00",
       "hexCount": 9,
       "gridPosition": { "q": 5, "r": 6 },
+      "department": "Marketing & Communications",
+      "leadName": "Amanda Rodriguez",
+      "leadEmail": "arodriguez@example.com",
+      "budgetStatus": "On track",
+      "priority": "Medium",
+      "lastUpdated": "2025-03-14",
+      "description": "Applications supporting content management, campaign tracking, and marketing analytics.",
       "applications": [
         {
           "id": "app21",
@@ -283,6 +318,13 @@
       "color": "#1E90FF",
       "hexCount": 6,
       "gridPosition": { "q": -10, "r": -6 },
+      "department": "Research & Development",
+      "leadName": "Raj Patel",
+      "leadEmail": "rpatel@example.com",
+      "budgetStatus": "Special allocation",
+      "priority": "Experimental",
+      "lastUpdated": "2025-03-19",
+      "description": "Innovation lab applications and technologies still in research or pilot phase.",
       "applications": [
         {
           "id": "app25",
@@ -326,6 +368,13 @@
       "color": "#008080",
       "hexCount": 4,
       "gridPosition": { "q": 0, "r": -8 },
+      "department": "Enterprise Systems",
+      "leadName": "Lauren Taylor",
+      "leadEmail": "ltaylor@example.com",
+      "budgetStatus": "Shared allocation",
+      "priority": "High",
+      "lastUpdated": "2025-03-16",
+      "description": "Applications that span multiple departments and provide cross-organization functionality.",
       "applications": [
         {
           "id": "app28",
