@@ -17,7 +17,8 @@ class HexGridRenderer {
                     timeoutIds,
                     currentZoomLevel,
                     setSelectedCluster,
-                    tooltipManager
+                    tooltipManager,
+                    setHoveredCluster
                 }) {
         this.svg = svg;
         this.mainGroup = mainGroup;
@@ -33,6 +34,7 @@ class HexGridRenderer {
         this.currentZoomLevel = currentZoomLevel;
         this.setSelectedCluster = setSelectedCluster;
         this.tooltipManager = tooltipManager;
+        this.setHoveredCluster = setHoveredCluster;
 
         // Constants
         this.width = window.innerWidth;
@@ -403,6 +405,9 @@ class HexGridRenderer {
 
                     // Show the top-level outlines immediately without transition
                     this.topLevelOutlineGroup.attr("opacity", 1);
+
+                    // Update the hoveredCluster state
+                    this.setHoveredCluster(cluster);
                 }
             })
             .on("mouseout", (event) => {
@@ -429,6 +434,9 @@ class HexGridRenderer {
                                             // Remove only this cluster's outlines
                                             d3.select(this).remove();
                                         });
+
+                                    // Clear the hovered cluster state
+                                    this.setHoveredCluster(null);
                                 }
                             }, 50)
                         );

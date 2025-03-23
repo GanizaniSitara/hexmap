@@ -1,6 +1,7 @@
 import React from 'react';
 import * as d3 from 'd3';
 import { getTypeColor } from '../connectionUtils';
+import ClusterInfoPanel from './components/ClusterInfoPanel';
 
 // Render the collisions notification panel
 export const CollisionNotification = ({ collisionsDetected }) => {
@@ -434,3 +435,5 @@ export const ClusterLegend = ({ entityData, selectedCluster, setSelectedCluster,
         </div>
     );
 };
+
+export { ClusterInfoPanel };

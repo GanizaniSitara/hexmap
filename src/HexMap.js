@@ -16,7 +16,8 @@ import {
     AppInfoPanel,
     ZoomStatus,
     ConnectionLegend,
-    ClusterLegend
+    ClusterLegend,
+    ClusterInfoPanel
 } from './ui/components';
 
 const HexMap = () => {
@@ -26,6 +27,7 @@ const HexMap = () => {
     const [currentZoomLevel, setCurrentZoomLevel] = useState(1);
     const [hoveredApp, setHoveredApp] = useState(null);
     const [appConnections, setAppConnections] = useState([]);
+    const [hoveredCluster, setHoveredCluster] = useState(null);
 
     // Refs
     const timeoutIds = useRef([]);
@@ -112,6 +114,7 @@ const HexMap = () => {
             .on("click", (event) => {
                 if (event.target.tagName === "rect") {
                     setSelectedCluster(null);
+                    setHoveredCluster(null);
                     svg.transition()
                         .duration(1000)
                         .ease(d3.easeCubicOut)
@@ -131,7 +134,8 @@ const HexMap = () => {
             mainGroup: g,
             setCurrentZoomLevel,
             resetHexagonsAndConnections,
-            topLevelOutlineGroup
+            topLevelOutlineGroup,
+            setHoveredCluster
         });
         zoomRef.current = zoomHandler.getZoom();
 
@@ -150,7 +154,8 @@ const HexMap = () => {
             timeoutIds,
             currentZoomLevel,
             setSelectedCluster,
-            tooltipManager: tooltipManagerRef.current
+            tooltipManager: tooltipManagerRef.current,
+            setHoveredCluster
         });
 
         // Initialize ClusterManager
@@ -221,6 +226,11 @@ const HexMap = () => {
 
             <ConnectionLegend
                 appConnections={appConnections}
+                currentZoomLevel={currentZoomLevel}
+            />
+
+            <ClusterInfoPanel
+                hoveredCluster={hoveredCluster}
                 currentZoomLevel={currentZoomLevel}
             />
         </div>
