@@ -79,8 +79,15 @@ class HexGridRenderer {
         this.entityData.clusters.forEach(cluster => {
             console.log(`Processing cluster ${cluster.id} with ${cluster.applications.length} apps`);
 
-            // Check if any apps have absolute positions
+            // Check if apps have grid positions
             const appsWithPosition = cluster.applications.filter(app => app.gridPosition);
+            const appsWithoutPosition = cluster.applications.filter(app => !app.gridPosition);
+
+            if (appsWithoutPosition.length > 0) {
+                console.warn(`Cluster ${cluster.id} has ${appsWithoutPosition.length} apps without positions:`,
+                    appsWithoutPosition.map(app => app.name || app.id).join(', '));
+            }
+
             console.log(`Cluster ${cluster.id} has ${appsWithPosition.length} apps with absolute positions`);
 
             const clusterGroup = this.mainGroup.append("g")
@@ -109,7 +116,7 @@ class HexGridRenderer {
                 .text(cluster.name);
 
             const hexCoords = hexGrid.generateHexCoords(
-                cluster.hexCount,
+                cluster.applications.length, // Use actual app count instead of hexCount
                 cluster.gridPosition.q,
                 cluster.gridPosition.r,
                 cluster.applications,
@@ -200,32 +207,25 @@ class HexGridRenderer {
             };
         }
 
-        // Add a small indicator dot for absolutely positioned hexagons
-        if (coord.app && coord.app.gridPosition) {
-            hexGroup.append("circle")
-                .attr("cx", 0)
-                .attr("cy", 0)
-                .attr("r", 3)
-                .attr("fill", coord.hasCollision ? "#ff0000" : "#fff");
+        // Add a small indicator dot for all hexagons (since all are now absolutely positioned)
+        hexGroup.append("circle")
+            .attr("cx", 0)
+            .attr("cy", 0)
+            .attr("r", 3)
+            .attr("fill", coord.hasCollision ? "#ff0000" : "#fff");
 
-            // SIMPLIFIED: Mark as absolute positioned
-            hexGroup.classed("absolute-positioned", true);
+        // Add the absolute-positioned class to all hexagons
+        hexGroup.classed("absolute-positioned", true);
 
-            // If starting at zoom level 0.7, hide these initially
-            if (this.currentZoomLevel <= 0.7) {
-                hexGroup.style("opacity", 0);
-            }
-
-            // If there's a collision, add it to our list with complete info
-            if (coord.hasCollision && coord.app.collidesWith) {
-                collisions.push({
-                    app: coord.app.name,
-                    cluster: cluster.name,
-                    position: `(${coord.app.gridPosition.q}, ${coord.app.gridPosition.r})`,
-                    collidesWithApp: coord.app.collidesWith.name,
-                    collidesWithCluster: coord.app.collidesWith.clusterName
-                });
-            }
+        // If there's a collision, add it to our list with complete info
+        if (coord.hasCollision && coord.app.collidesWith) {
+            collisions.push({
+                app: coord.app.name,
+                cluster: cluster.name,
+                position: `(${coord.app.gridPosition.q}, ${coord.app.gridPosition.r})`,
+                collidesWithApp: coord.app.collidesWith.name,
+                collidesWithCluster: coord.app.collidesWith.clusterName
+            });
         }
 
         this.setupHexagonInteractions({
@@ -384,22 +384,15 @@ class HexGridRenderer {
 
                     // Only create outlines if they don't already exist for this cluster
                     if (this.topLevelOutlineGroup.selectAll(`[data-cluster-id="${clusterId}"]`).empty()) {
-                        // Create outlines in the top-level group - but only for visible hexagons
+                        // Create outlines in the top-level group - for all hexagons since all are visible now
                         data.hexCoords.forEach(coord => {
-                            // Check if this hexagon would be visible
-                            const isAbsolutePositioned = coord.app && coord.app.gridPosition;
-                            const wouldBeHidden = isAbsolutePositioned && currentZoom <= 0.7;
-
-                            // Only draw outlines for visible hexagons
-                            if (!wouldBeHidden) {
-                                this.topLevelOutlineGroup.append("path")
-                                    .attr("transform", `translate(${coord.x},${coord.y})`)
-                                    .attr("d", hexagonPath(data.hexSize + 2))
-                                    .attr("fill", "none")
-                                    .attr("stroke", "#000000")
-                                    .attr("stroke-width", 2)
-                                    .attr("data-cluster-id", clusterId);
-                            }
+                            this.topLevelOutlineGroup.append("path")
+                                .attr("transform", `translate(${coord.x},${coord.y})`)
+                                .attr("d", hexagonPath(data.hexSize + 2))
+                                .attr("fill", "none")
+                                .attr("stroke", "#000000")
+                                .attr("stroke-width", 2)
+                                .attr("data-cluster-id", clusterId);
                         });
                     }
 

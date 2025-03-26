@@ -2,13 +2,7 @@ import * as d3 from 'd3';
 
 // Function to determine if a hexagon should be visible at current zoom level
 export const shouldHexagonBeVisible = (hexagon, zoomLevel) => {
-    const hasCircle = d3.select(hexagon).select("circle").size() > 0;
-
-    // Absolutely positioned hexagons (with circles) are hidden at 0.7x zoom
-    if (hasCircle && zoomLevel <= 0.7) {
-        return false;
-    }
-
+    // All hexagons are visible at all zoom levels in the new approach
     return true;
 };
 
@@ -17,11 +11,8 @@ export const getVisibleHexagonsInCluster = (clusterId, zoomLevel) => {
     const clusterGroup = d3.select(`#cluster-${clusterId}`);
     if (!clusterGroup.node()) return [];
 
-    const allHexGroups = clusterGroup.selectAll(".hexagon-group").nodes();
-
-    return allHexGroups.filter(hexNode =>
-        shouldHexagonBeVisible(hexNode, zoomLevel)
-    );
+    // With absolute positioning, all hexagons are visible
+    return clusterGroup.selectAll(".hexagon-group").nodes();
 };
 
 // Calculate center of mass for a set of hexagons
