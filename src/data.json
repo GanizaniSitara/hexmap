@@ -31,6 +31,7 @@
           "name": "Payroll",
           "description": "Employee payment processing",
           "color": "#4169E1",
+          "gridPosition": { "q": -6, "r": -2 },
           "connections": [
             { "to": "app3", "type": "data-flow", "strength": "medium" },
             { "to": "app7", "type": "integration", "strength": "high" }
@@ -41,6 +42,7 @@
           "name": "Expense Tracking",
           "description": "Business expense management",
           "color": "#4169E1",
+          "gridPosition": { "q": -5, "r": -2 },
           "connections": [
             { "to": "app4", "type": "data-flow", "strength": "medium" }
           ]
@@ -61,9 +63,66 @@
           "name": "Budgeting",
           "description": "Annual budget planning",
           "color": "#4169E1",
+          "gridPosition": { "q": -4, "r": -2 },
           "connections": [
             { "to": "app13", "type": "integration", "strength": "low" }
           ]
+        },
+        {
+          "id": "finance-hex-1",
+          "name": "Invoice Processing",
+          "description": "Invoice management system",
+          "color": "#4169E1",
+          "gridPosition": { "q": -4, "r": -4 },
+          "connections": []
+        },
+        {
+          "id": "finance-hex-2",
+          "name": "Tax Compliance",
+          "description": "Tax reporting and compliance",
+          "color": "#4169E1",
+          "gridPosition": { "q": -5, "r": -4 },
+          "connections": []
+        },
+        {
+          "id": "finance-hex-3",
+          "name": "Cash Management",
+          "description": "Cash flow monitoring",
+          "color": "#4169E1",
+          "gridPosition": { "q": -6, "r": -4 },
+          "connections": []
+        },
+        {
+          "id": "finance-hex-4",
+          "name": "Audit Tools",
+          "description": "Internal audit platform",
+          "color": "#4169E1",
+          "gridPosition": { "q": -7, "r": -4 },
+          "connections": []
+        },
+        {
+          "id": "finance-hex-5",
+          "name": "Procurement Portal",
+          "description": "Vendor management",
+          "color": "#4169E1",
+          "gridPosition": { "q": -6, "r": -5 },
+          "connections": []
+        },
+        {
+          "id": "finance-hex-6",
+          "name": "Forecasting Tool",
+          "description": "Financial forecasting",
+          "color": "#4169E1",
+          "gridPosition": { "q": -5, "r": -5 },
+          "connections": []
+        },
+        {
+          "id": "finance-hex-7",
+          "name": "Cost Allocation",
+          "description": "Cost center management",
+          "color": "#4169E1",
+          "gridPosition": { "q": -4, "r": -5 },
+          "connections": []
         }
       ]
     },
@@ -86,6 +145,7 @@
           "name": "Recruiting",
           "description": "Applicant tracking system",
           "color": "#DC143C",
+          "gridPosition": { "q": 4, "r": 0 },
           "connections": [
             { "to": "app8", "type": "data-flow", "strength": "medium" }
           ]
@@ -106,6 +166,7 @@
           "name": "Time Tracking",
           "description": "Employee time management",
           "color": "#DC143C",
+          "gridPosition": { "q": 5, "r": 0 },
           "connections": [
             { "to": "app9", "type": "data-flow", "strength": "low" },
             { "to": "app30", "type": "api", "strength": "medium" }
@@ -116,9 +177,42 @@
           "name": "Learning",
           "description": "Employee training platform",
           "color": "#DC143C",
+          "gridPosition": { "q": 6, "r": 0 },
           "connections": [
             { "to": "app29", "type": "integration", "strength": "medium" }
           ]
+        },
+        {
+          "id": "hr-hex-1",
+          "name": "Performance Management",
+          "description": "Employee reviews and goals",
+          "color": "#DC143C",
+          "gridPosition": { "q": 4, "r": 2 },
+          "connections": []
+        },
+        {
+          "id": "hr-hex-2",
+          "name": "Career Development",
+          "description": "Employee career pathing",
+          "color": "#DC143C",
+          "gridPosition": { "q": 5, "r": 2 },
+          "connections": []
+        },
+        {
+          "id": "hr-hex-3",
+          "name": "Employee Directory",
+          "description": "Contact information database",
+          "color": "#DC143C",
+          "gridPosition": { "q": 6, "r": 2 },
+          "connections": []
+        },
+        {
+          "id": "hr-hex-4",
+          "name": "Offboarding Process",
+          "description": "Exit management",
+          "color": "#DC143C",
+          "gridPosition": { "q": 5, "r": 3 },
+          "connections": []
         }
       ]
     },
@@ -153,6 +247,7 @@
           "name": "Quote System",
           "description": "Sales quote generation",
           "color": "#32CD32",
+          "gridPosition": { "q": 9, "r": -3 },
           "connections": [
             { "to": "app12", "type": "data-flow", "strength": "high" }
           ]
@@ -162,6 +257,7 @@
           "name": "Contract Management",
           "description": "Customer contract system",
           "color": "#32CD32",
+          "gridPosition": { "q": 10, "r": -3 },
           "connections": [
             { "to": "app13", "type": "data-flow", "strength": "medium" }
           ]
@@ -182,6 +278,47 @@
           "name": "Territory Planning",
           "description": "Sales territory management",
           "color": "#32CD32",
+          "gridPosition": { "q": 11, "r": -3 },
+          "connections": []
+        },
+        {
+          "id": "sales-hex-1",
+          "name": "Opportunity Tracker",
+          "description": "Deal pipeline management",
+          "color": "#32CD32",
+          "gridPosition": { "q": 13, "r": -2 },
+          "connections": []
+        },
+        {
+          "id": "sales-hex-2",
+          "name": "Product Catalog",
+          "description": "Sales offerings database",
+          "color": "#32CD32",
+          "gridPosition": { "q": 10, "r": -2 },
+          "connections": []
+        },
+        {
+          "id": "sales-hex-3",
+          "name": "Commission Calculator",
+          "description": "Sales commission system",
+          "color": "#32CD32",
+          "gridPosition": { "q": 11, "r": -2 },
+          "connections": []
+        },
+        {
+          "id": "sales-hex-4",
+          "name": "Lead Management",
+          "description": "Lead qualification platform",
+          "color": "#32CD32",
+          "gridPosition": { "q": 12, "r": -2 },
+          "connections": []
+        },
+        {
+          "id": "sales-hex-5",
+          "name": "Customer Portal",
+          "description": "Client access portal",
+          "color": "#32CD32",
+          "gridPosition": { "q": 12, "r": -3 },
           "connections": []
         }
       ]
@@ -205,6 +342,7 @@
           "name": "Service Desk",
           "description": "IT support ticketing",
           "color": "#9932CC",
+          "gridPosition": { "q": -6, "r": 3 },
           "connections": [
             { "to": "app16", "type": "data-flow", "strength": "medium" }
           ]
@@ -214,6 +352,7 @@
           "name": "Asset Management",
           "description": "Hardware/software tracking",
           "color": "#9932CC",
+          "gridPosition": { "q": -5, "r": 3 },
           "connections": [
             { "to": "app17", "type": "integration", "strength": "low" }
           ]
@@ -233,6 +372,7 @@
           "name": "CI/CD Platform",
           "description": "Continuous integration",
           "color": "#9932CC",
+          "gridPosition": { "q": -4, "r": 3 },
           "connections": [
             { "to": "app19", "type": "integration", "strength": "high" },
             { "to": "app20", "type": "data-flow", "strength": "medium" }
@@ -243,6 +383,7 @@
           "name": "Cloud Management",
           "description": "Cloud resource management",
           "color": "#9932CC",
+          "gridPosition": { "q": -3, "r": 3 },
           "connections": [
             { "to": "app20", "type": "integration", "strength": "high" }
           ]
@@ -253,6 +394,70 @@
           "description": "Security monitoring tools",
           "color": "#9932CC",
           "gridPosition": { "q": -2, "r": 6 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-1",
+          "name": "Identity Management",
+          "description": "Access control system",
+          "color": "#9932CC",
+          "gridPosition": { "q": -7, "r": 5 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-2",
+          "name": "Data Center Management",
+          "description": "Server infrastructure",
+          "color": "#9932CC",
+          "gridPosition": { "q": -4, "r": 5 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-3",
+          "name": "Database Administration",
+          "description": "Database monitoring",
+          "color": "#9932CC",
+          "gridPosition": { "q": -5, "r": 5 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-4",
+          "name": "Application Control",
+          "description": "App ecosystem management",
+          "color": "#9932CC",
+          "gridPosition": { "q": -6, "r": 5 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-5",
+          "name": "API Gateway",
+          "description": "API management platform",
+          "color": "#9932CC",
+          "gridPosition": { "q": -3, "r": 5 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-6",
+          "name": "IT Compliance",
+          "description": "Regulatory compliance",
+          "color": "#9932CC",
+          "gridPosition": { "q": -4, "r": 6 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-7",
+          "name": "Disaster Recovery",
+          "description": "Backup and recovery system",
+          "color": "#9932CC",
+          "gridPosition": { "q": -5, "r": 6 },
+          "connections": []
+        },
+        {
+          "id": "it-hex-8",
+          "name": "Change Management",
+          "description": "IT change control system",
+          "color": "#9932CC",
+          "gridPosition": { "q": -6, "r": 6 },
           "connections": []
         }
       ]
@@ -276,7 +481,7 @@
           "name": "Content Management",
           "description": "Web content system",
           "color": "#FF8C00",
-          "gridPosition": { "q": 3, "r": 8 },
+          "gridPosition": { "q": 5, "r": 6 },
           "connections": [
             { "to": "app23", "type": "integration", "strength": "medium" }
           ]
@@ -286,6 +491,7 @@
           "name": "Marketing Automation",
           "description": "Campaign management",
           "color": "#FF8C00",
+          "gridPosition": { "q": 5, "r": 7 },
           "connections": [
             { "to": "app23", "type": "data-flow", "strength": "high" },
             { "to": "app24", "type": "data-flow", "strength": "high" },
@@ -297,6 +503,7 @@
           "name": "Social Media",
           "description": "Social media management",
           "color": "#FF8C00",
+          "gridPosition": { "q": 6, "r": 7 },
           "connections": [
             { "to": "app24", "type": "data-flow", "strength": "medium" }
           ]
@@ -306,9 +513,50 @@
           "name": "Analytics",
           "description": "Marketing performance tracking",
           "color": "#FF8C00",
+          "gridPosition": { "q": 7, "r": 7 },
           "connections": [
             { "to": "app28", "type": "integration", "strength": "medium" }
           ]
+        },
+        {
+          "id": "marketing-hex-1",
+          "name": "Digital Asset Manager",
+          "description": "Media asset repository",
+          "color": "#FF8C00",
+          "gridPosition": { "q": 4, "r": 6 },
+          "connections": []
+        },
+        {
+          "id": "marketing-hex-2",
+          "name": "Email Platform",
+          "description": "Email marketing system",
+          "color": "#FF8C00",
+          "gridPosition": { "q": 4, "r": 7 },
+          "connections": []
+        },
+        {
+          "id": "marketing-hex-3",
+          "name": "Brand Portal",
+          "description": "Brand guidelines system",
+          "color": "#FF8C00",
+          "gridPosition": { "q": 5, "r": 8 },
+          "connections": []
+        },
+        {
+          "id": "marketing-hex-4",
+          "name": "Event Management",
+          "description": "Event planning platform",
+          "color": "#FF8C00",
+          "gridPosition": { "q": 7, "r": 6 },
+          "connections": []
+        },
+        {
+          "id": "marketing-hex-5",
+          "name": "SEO Tools",
+          "description": "Search optimization",
+          "color": "#FF8C00",
+          "gridPosition": { "q": 6, "r": 6 },
+          "connections": []
         }
       ]
     },
@@ -341,6 +589,7 @@
           "name": "Quantum Computing",
           "description": "Quantum research platform",
           "color": "#1E90FF",
+          "gridPosition": { "q": -9, "r": -6 },
           "connections": [
             { "to": "app27", "type": "integration", "strength": "low" }
           ]
@@ -350,6 +599,7 @@
           "name": "Blockchain Innovation",
           "description": "Distributed ledger technologies",
           "color": "#1E90FF",
+          "gridPosition": { "q": -10, "r": -6 },
           "connections": []
         },
         {
@@ -358,6 +608,22 @@
           "description": "App to test collision detection",
           "color": "#1E90FF",
           "gridPosition": { "q": -15, "r": -10 },
+          "connections": []
+        },
+        {
+          "id": "emerging-hex-1",
+          "name": "AR/VR Lab",
+          "description": "Augmented reality research",
+          "color": "#1E90FF",
+          "gridPosition": { "q": -11, "r": -6 },
+          "connections": []
+        },
+        {
+          "id": "emerging-hex-2",
+          "name": "IoT Platform",
+          "description": "Internet of Things framework",
+          "color": "#1E90FF",
+          "gridPosition": { "q": -10, "r": -5 },
           "connections": []
         }
       ]
@@ -381,7 +647,7 @@
           "name": "Enterprise Analytics",
           "description": "Cross-department insights",
           "color": "#8A2BE2",
-          "gridPosition": { "q": 2, "r": -10 },
+          "gridPosition": { "q": 2, "r": -8 },
           "connections": [
             { "to": "app29", "type": "data-flow", "strength": "medium" }
           ]
@@ -401,6 +667,15 @@
           "name": "Project Management",
           "description": "Enterprise project tracking",
           "color": "#8A2BE2",
+          "gridPosition": { "q": 0, "r": -7 },
+          "connections": []
+        },
+        {
+          "id": "crossfunctional-hex-1",
+          "name": "Collaboration Tools",
+          "description": "Cross-team collaboration platform",
+          "color": "#8A2BE2",
+          "gridPosition": { "q": 1, "r": -7 },
           "connections": []
         }
       ]
