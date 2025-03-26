@@ -19,7 +19,8 @@
           "name": "Accounting System",
           "description": "Core accounting platform",
           "color": "#4169E1",
-          "gridPosition": { "q": -8, "r": -5 },
+          "gridPosition": { "q": -5, "r": -1 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app2", "type": "data-flow", "strength": "high" },
             { "to": "app4", "type": "integration", "strength": "medium" },
@@ -31,7 +32,8 @@
           "name": "Payroll",
           "description": "Employee payment processing",
           "color": "#4169E1",
-          "gridPosition": { "q": -6, "r": -2 },
+          "gridPosition": { "q": -1, "r": -2 },
+          "showPositionIndicator": false,
           "connections": [
             { "to": "app3", "type": "data-flow", "strength": "medium" },
             { "to": "app7", "type": "integration", "strength": "high" }
@@ -53,6 +55,7 @@
           "description": "Regulatory reporting system",
           "color": "#4169E1",
           "gridPosition": { "q": -2, "r": -1 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app5", "type": "data-flow", "strength": "high" },
             { "to": "app28", "type": "api", "strength": "medium" }
@@ -73,7 +76,7 @@
           "name": "Invoice Processing",
           "description": "Invoice management system",
           "color": "#4169E1",
-          "gridPosition": { "q": -4, "r": -4 },
+          "gridPosition": { "q": -4, "r": -3 },
           "connections": []
         },
         {
@@ -81,7 +84,7 @@
           "name": "Tax Compliance",
           "description": "Tax reporting and compliance",
           "color": "#4169E1",
-          "gridPosition": { "q": -5, "r": -4 },
+          "gridPosition": { "q": -3, "r": -2 },
           "connections": []
         },
         {
@@ -89,7 +92,8 @@
           "name": "Cash Management",
           "description": "Cash flow monitoring",
           "color": "#4169E1",
-          "gridPosition": { "q": -6, "r": -4 },
+          "gridPosition": { "q": -6, "r": -3 },
+          "showPositionIndicator": true,
           "connections": []
         },
         {
@@ -97,7 +101,7 @@
           "name": "Audit Tools",
           "description": "Internal audit platform",
           "color": "#4169E1",
-          "gridPosition": { "q": -7, "r": -4 },
+          "gridPosition": { "q": -2, "r": -3 },
           "connections": []
         },
         {
@@ -105,7 +109,7 @@
           "name": "Procurement Portal",
           "description": "Vendor management",
           "color": "#4169E1",
-          "gridPosition": { "q": -6, "r": -5 },
+          "gridPosition": { "q": -5, "r": -3 },
           "connections": []
         },
         {
@@ -113,7 +117,7 @@
           "name": "Forecasting Tool",
           "description": "Financial forecasting",
           "color": "#4169E1",
-          "gridPosition": { "q": -5, "r": -5 },
+          "gridPosition": { "q": -2, "r": -2 },
           "connections": []
         },
         {
@@ -121,7 +125,7 @@
           "name": "Cost Allocation",
           "description": "Cost center management",
           "color": "#4169E1",
-          "gridPosition": { "q": -4, "r": -5 },
+          "gridPosition": { "q": -3, "r": -3 },
           "connections": []
         }
       ]
@@ -145,7 +149,7 @@
           "name": "Recruiting",
           "description": "Applicant tracking system",
           "color": "#DC143C",
-          "gridPosition": { "q": 4, "r": 0 },
+          "gridPosition": { "q": 7, "r": 1 },
           "connections": [
             { "to": "app8", "type": "data-flow", "strength": "medium" }
           ]
@@ -155,7 +159,8 @@
           "name": "Benefits",
           "description": "Employee benefits management",
           "color": "#DC143C",
-          "gridPosition": { "q": 8, "r": 3 },
+          "gridPosition": { "q": 4, "r": 1 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app2", "type": "integration", "strength": "high" },
             { "to": "app6", "type": "data-flow", "strength": "medium" }
@@ -166,7 +171,7 @@
           "name": "Time Tracking",
           "description": "Employee time management",
           "color": "#DC143C",
-          "gridPosition": { "q": 5, "r": 0 },
+          "gridPosition": { "q": 5, "r": 1 },
           "connections": [
             { "to": "app9", "type": "data-flow", "strength": "low" },
             { "to": "app30", "type": "api", "strength": "medium" }
@@ -177,7 +182,7 @@
           "name": "Learning",
           "description": "Employee training platform",
           "color": "#DC143C",
-          "gridPosition": { "q": 6, "r": 0 },
+          "gridPosition": { "q": 6, "r": 1 },
           "connections": [
             { "to": "app29", "type": "integration", "strength": "medium" }
           ]
@@ -187,7 +192,7 @@
           "name": "Performance Management",
           "description": "Employee reviews and goals",
           "color": "#DC143C",
-          "gridPosition": { "q": 4, "r": 2 },
+          "gridPosition": { "q": 7, "r": 2 },
           "connections": []
         },
         {
@@ -211,7 +216,7 @@
           "name": "Offboarding Process",
           "description": "Exit management",
           "color": "#DC143C",
-          "gridPosition": { "q": 5, "r": 3 },
+          "gridPosition": { "q": 8, "r": 2 },
           "connections": []
         }
       ]
@@ -235,7 +240,8 @@
           "name": "CRM",
           "description": "Customer relationship management",
           "color": "#32CD32",
-          "gridPosition": { "q": 0, "r": 0 },
+          "gridPosition": { "q": 10, "r": 3 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app11", "type": "data-flow", "strength": "high" },
             { "to": "app12", "type": "integration", "strength": "high" },
@@ -268,6 +274,7 @@
           "description": "Performance tracking",
           "color": "#32CD32",
           "gridPosition": { "q": 7, "r": -6 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app14", "type": "data-flow", "strength": "medium" },
             { "to": "app28", "type": "integration", "strength": "high" }
@@ -342,7 +349,7 @@
           "name": "Service Desk",
           "description": "IT support ticketing",
           "color": "#9932CC",
-          "gridPosition": { "q": -6, "r": 3 },
+          "gridPosition": { "q": -5, "r": 4 },
           "connections": [
             { "to": "app16", "type": "data-flow", "strength": "medium" }
           ]
@@ -352,7 +359,7 @@
           "name": "Asset Management",
           "description": "Hardware/software tracking",
           "color": "#9932CC",
-          "gridPosition": { "q": -5, "r": 3 },
+          "gridPosition": { "q": -4, "r": 4 },
           "connections": [
             { "to": "app17", "type": "integration", "strength": "low" }
           ]
@@ -362,7 +369,8 @@
           "name": "Network Monitoring",
           "description": "Infrastructure monitoring",
           "color": "#9932CC",
-          "gridPosition": { "q": -10, "r": 5 },
+          "gridPosition": { "q": -5, "r": 7 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app20", "type": "data-flow", "strength": "high" }
           ]
@@ -372,7 +380,7 @@
           "name": "CI/CD Platform",
           "description": "Continuous integration",
           "color": "#9932CC",
-          "gridPosition": { "q": -4, "r": 3 },
+          "gridPosition": { "q": -3, "r": 4 },
           "connections": [
             { "to": "app19", "type": "integration", "strength": "high" },
             { "to": "app20", "type": "data-flow", "strength": "medium" }
@@ -383,7 +391,7 @@
           "name": "Cloud Management",
           "description": "Cloud resource management",
           "color": "#9932CC",
-          "gridPosition": { "q": -3, "r": 3 },
+          "gridPosition": { "q": -2, "r": 4 },
           "connections": [
             { "to": "app20", "type": "integration", "strength": "high" }
           ]
@@ -394,6 +402,7 @@
           "description": "Security monitoring tools",
           "color": "#9932CC",
           "gridPosition": { "q": -2, "r": 6 },
+          "showPositionIndicator": true,
           "connections": []
         },
         {
@@ -401,7 +410,7 @@
           "name": "Identity Management",
           "description": "Access control system",
           "color": "#9932CC",
-          "gridPosition": { "q": -7, "r": 5 },
+          "gridPosition": { "q": -6, "r": 4 },
           "connections": []
         },
         {
@@ -457,7 +466,7 @@
           "name": "Change Management",
           "description": "IT change control system",
           "color": "#9932CC",
-          "gridPosition": { "q": -6, "r": 6 },
+          "gridPosition": { "q": -3, "r": 6 },
           "connections": []
         }
       ]
@@ -482,6 +491,7 @@
           "description": "Web content system",
           "color": "#FF8C00",
           "gridPosition": { "q": 5, "r": 6 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app23", "type": "integration", "strength": "medium" }
           ]
@@ -579,7 +589,7 @@
           "name": "AI Research",
           "description": "Cutting-edge AI development",
           "color": "#1E90FF",
-          "gridPosition": { "q": -15, "r": -10 },
+          "gridPosition": { "q": -9, "r": 0 },
           "connections": [
             { "to": "app26", "type": "data-flow", "strength": "high" }
           ]
@@ -607,8 +617,9 @@
           "name": "Collision Test",
           "description": "App to test collision detection",
           "color": "#1E90FF",
-          "gridPosition": { "q": -15, "r": -10 },
-          "connections": []
+          "gridPosition": { "q": -9, "r": -0 },
+          "connections": [
+          ]
         },
         {
           "id": "emerging-hex-1",
@@ -623,7 +634,7 @@
           "name": "IoT Platform",
           "description": "Internet of Things framework",
           "color": "#1E90FF",
-          "gridPosition": { "q": -10, "r": -5 },
+          "gridPosition": { "q": -11, "r": -5 },
           "connections": []
         }
       ]
@@ -658,6 +669,7 @@
           "description": "Shared company documentation",
           "color": "#8A2BE2",
           "gridPosition": { "q": -1, "r": -6 },
+          "showPositionIndicator": true,
           "connections": [
             { "to": "app30", "type": "integration", "strength": "medium" }
           ]

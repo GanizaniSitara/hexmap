@@ -207,12 +207,15 @@ class HexGridRenderer {
             };
         }
 
-        // Add a small indicator dot for all hexagons (since all are now absolutely positioned)
-        hexGroup.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 3)
-            .attr("fill", coord.hasCollision ? "#ff0000" : "#fff");
+        // Add a small indicator dot only if showPositionIndicator is true for this app
+        // Or if there's a collision (always show indicator for collisions)
+        if ((coord.app && coord.app.showPositionIndicator === true) || coord.hasCollision) {
+            hexGroup.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", 3)
+                .attr("fill", coord.hasCollision ? "#ff0000" : "#fff");
+        }
 
         // Add the absolute-positioned class to all hexagons
         hexGroup.classed("absolute-positioned", true);
