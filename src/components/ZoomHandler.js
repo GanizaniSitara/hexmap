@@ -50,9 +50,6 @@ class ZoomHandler {
         // Update the state
         this.setCurrentZoomLevel(event.transform.k);
 
-        // Update hexagon visibility
-        this.updateAbsoluteHexagonsVisibility(event.transform.k);
-
         // Manage outlines based on zoom level
         if (event.transform.k >= 2.2) {
             // Hide outlines when zoomed in past threshold
@@ -130,9 +127,6 @@ class ZoomHandler {
         this.setCurrentZoomLevel(newScale);
         this.currentZoomLevel = newScale;
 
-        // Apply absolute hexagon visibility update
-        this.updateAbsoluteHexagonsVisibility(newScale);
-
         // Hide outlines when zoomed in past threshold
         if (newScale >= 2.2) {
             this.topLevelOutlineGroup.attr("opacity", 0);
@@ -142,34 +136,6 @@ class ZoomHandler {
         if (crossingThresholdDown) {
             this.resetHexagonsAndConnections();
         }
-    }
-
-    // Function to update visibility of absolutely positioned hexagons based on zoom level
-    updateAbsoluteHexagonsVisibility(zoomLevel) {
-        console.log(`Updating hexagon visibility for zoom level: ${zoomLevel}`);
-
-        // Simple direct selection of all hexagons with circles (indicator dots)
-        const circleHexagons = d3.selectAll(".hexagon-group").filter(function() {
-            return d3.select(this).select("circle").size() > 0;
-        });
-
-        console.log(`Found ${circleHexagons.size()} absolutely positioned hexagons with circles`);
-
-        // Set visibility based on zoom level
-        circleHexagons.each(function() {
-            const hexGroup = d3.select(this);
-
-            // Simply hide at 0.7x zoom, show at other levels
-            if (zoomLevel <= 0.7) {
-                hexGroup.style("opacity", 0);
-                console.log(`Hiding hexagon ${hexGroup.attr("id")}`);
-            } else {
-                hexGroup.style("opacity", 1);
-            }
-        });
-
-        // After updating hexagon visibility, update cluster label positions
-        this.updateClusterLabelPositions(zoomLevel);
     }
 
     // Function to update cluster label positions based on zoom level
@@ -192,37 +158,33 @@ class ZoomHandler {
 
             if (zoomLevel <= 0.7) {
                 // At 0.7x zoom, center the label within the cluster mass
-                // First, compute the centroid of all hexagons in this cluster
+                // Calculate the center of mass based on all hexagons in cluster
                 const allHexGroups = clusterGroup.selectAll(".hexagon-group").nodes();
                 if (allHexGroups.length === 0) return;
 
-                // Calculate the center of mass for visible hexagons
+                // Calculate the center of all hexagons
                 let sumX = 0, sumY = 0, count = 0;
                 allHexGroups.forEach(hexNode => {
-                    const hexGroup = d3.select(hexNode);
+                    try {
+                        const hexGroup = d3.select(hexNode);
+                        const transform = hexGroup.attr("transform");
+                        if (!transform) return; // Skip if transform is missing
 
-                    // Only include visible hexagons
-                    if (hexGroup.style("opacity") !== "0") {
-                        try {
-                            const transform = hexGroup.attr("transform");
-                            if (!transform) return; // Skip if transform is missing
+                        // Extract translate values from the transform attribute
+                        const translateMatch = /translate\(([^,]+),([^)]+)\)/.exec(transform);
+                        if (translateMatch && translateMatch.length >= 3) {
+                            const x = parseFloat(translateMatch[1]);
+                            const y = parseFloat(translateMatch[2]);
 
-                            // Extract translate values from the transform attribute
-                            const translateMatch = /translate\(([^,]+),([^)]+)\)/.exec(transform);
-                            if (translateMatch && translateMatch.length >= 3) {
-                                const x = parseFloat(translateMatch[1]);
-                                const y = parseFloat(translateMatch[2]);
-
-                                // Only count if we got valid numbers
-                                if (!isNaN(x) && !isNaN(y)) {
-                                    sumX += x;
-                                    sumY += y;
-                                    count++;
-                                }
+                            // Only count if we got valid numbers
+                            if (!isNaN(x) && !isNaN(y)) {
+                                sumX += x;
+                                sumY += y;
+                                count++;
                             }
-                        } catch (e) {
-                            console.error("Error processing hexagon:", e);
                         }
+                    } catch (e) {
+                        console.error("Error processing hexagon:", e);
                     }
                 });
 
@@ -254,7 +216,7 @@ class ZoomHandler {
 
                     console.log(`Moving label to (${centerX}, ${centerY})`);
                 } else {
-                    console.warn(`No visible hexagons found for cluster ${cluster.id}`);
+                    console.warn(`No hexagons found for cluster ${cluster.id}`);
                 }
             } else {
                 // At 1.0x zoom or higher, return to original position if stored
