@@ -76,7 +76,7 @@ export const DetailPanel = ({ selectedCluster, svgRef, zoomRef }) => {
                         <div className="text-xs text-gray-500">{app.description}</div>
                         {app.gridPosition && (
                             <div className="text-xs text-blue-500">
-                                Custom position: q={app.gridPosition.q}, r={app.gridPosition.r}
+                                Position: q={app.gridPosition.q}, r={app.gridPosition.r}
                             </div>
                         )}
                         {app.connections && app.connections.length > 0 && (
@@ -359,11 +359,9 @@ export const ClusterLegend = ({ entityData, selectedCluster, setSelectedCluster,
                                 justifyContent: 'space-between',
                                 marginTop: '3px'
                             }}>
-                                {app.gridPosition && (
-                                    <div style={{ fontSize: '10px', color: '#3b82f6' }}>
-                                        Custom position
-                                    </div>
-                                )}
+                                <div style={{ fontSize: '10px', color: '#3b82f6' }}>
+                                    Position: q={app.gridPosition.q}, r={app.gridPosition.r}
+                                </div>
                                 {app.connections && app.connections.length > 0 && (
                                     <div style={{ fontSize: '10px', color: '#8b5cf6' }}>
                                         {app.connections.length} connection{app.connections.length !== 1 ? 's' : ''}

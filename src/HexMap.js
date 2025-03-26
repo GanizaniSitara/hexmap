@@ -171,8 +171,13 @@ const HexMap = () => {
             .attr("class", "connections-group");
         connectionsGroupRef.current = connectionsGroup;
 
-        // Initial call to set up hexagon visibility based on starting zoom level
-        zoomHandler.updateAbsoluteHexagonsVisibility(currentZoomLevel);
+        // Remove this line that's causing the error:
+        // zoomHandler.updateAbsoluteHexagonsVisibility(currentZoomLevel);
+
+        // Instead, if needed, call the cluster label update method:
+        if (zoomHandler.updateClusterLabelPositions) {
+            zoomHandler.updateClusterLabelPositions(currentZoomLevel);
+        }
 
         return () => {
             // Cleanup
