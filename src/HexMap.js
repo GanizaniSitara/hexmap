@@ -17,7 +17,8 @@ import {
     ZoomStatus,
     ConnectionLegend,
     ClusterLegend,
-    ClusterInfoPanel
+    ClusterInfoPanel,
+    ContextMenu
 } from './ui/components';
 
 const HexMap = () => {
@@ -28,6 +29,12 @@ const HexMap = () => {
     const [hoveredApp, setHoveredApp] = useState(null);
     const [appConnections, setAppConnections] = useState([]);
     const [hoveredCluster, setHoveredCluster] = useState(null);
+    const [contextMenu, setContextMenu] = useState({
+        show: false,
+        x: 0,
+        y: 0,
+        items: []
+    });
 
     // Refs
     const timeoutIds = useRef([]);
@@ -135,7 +142,8 @@ const HexMap = () => {
             setCurrentZoomLevel,
             resetHexagonsAndConnections,
             topLevelOutlineGroup,
-            setHoveredCluster
+            setHoveredCluster,
+            setContextMenu // Pass setContextMenu here
         });
         zoomRef.current = zoomHandler.getZoom();
 
@@ -155,7 +163,8 @@ const HexMap = () => {
             currentZoomLevel,
             setSelectedCluster,
             tooltipManager: tooltipManagerRef.current,
-            setHoveredCluster
+            setHoveredCluster,
+            setContextMenu
         });
 
         // Initialize ClusterManager
@@ -187,7 +196,7 @@ const HexMap = () => {
     }, []);
 
     return (
-        <div className="relative">
+        <div className="relative" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
             <svg
                 ref={svgRef}
                 style={{ width: '100vw', height: '100vh' }}
@@ -238,6 +247,15 @@ const HexMap = () => {
                 hoveredCluster={hoveredCluster}
                 currentZoomLevel={currentZoomLevel}
             />
+
+            {contextMenu.show && (
+                <ContextMenu
+                    x={contextMenu.x}
+                    y={contextMenu.y}
+                    items={contextMenu.items}
+                    onClose={() => setContextMenu({...contextMenu, show: false})}
+                />
+            )}
         </div>
     );
 };

@@ -18,7 +18,8 @@ class HexGridRenderer {
                     currentZoomLevel,
                     setSelectedCluster,
                     tooltipManager,
-                    setHoveredCluster
+                    setHoveredCluster,
+                    setContextMenu
                 }) {
         this.svg = svg;
         this.mainGroup = mainGroup;
@@ -35,6 +36,7 @@ class HexGridRenderer {
         this.setSelectedCluster = setSelectedCluster;
         this.tooltipManager = tooltipManager;
         this.setHoveredCluster = setHoveredCluster;
+        this.setContextMenu = setContextMenu;
 
         // Constants
         this.width = window.innerWidth;
@@ -355,6 +357,34 @@ class HexGridRenderer {
                     // Clear any pending timeouts
                     this.timeoutIds.current.forEach(id => clearTimeout(id));
                     this.timeoutIds.current.length = 0;
+                }
+            })
+            .on("contextmenu", (event) => {
+                event.preventDefault();
+                const currentZoom = d3.zoomTransform(this.svg.node()).k;
+                
+                // Only show context menu at zoom levels 2.2 and 4
+                if (currentZoom === 2.2 || currentZoom === 4) {
+                    // Use clientX/clientY for viewport-relative coordinates
+                    this.setContextMenu({
+                        show: true,
+                        x: event.clientX, 
+                        y: event.clientY,
+                        items: [
+                            {
+                                label: "Action 1",
+                                action: () => console.log("Action 1 clicked", coord.app || cluster)
+                            },
+                            {
+                                label: "Action 2", 
+                                action: () => console.log("Action 2 clicked", coord.app || cluster)
+                            },
+                            {
+                                label: "Follow Link",
+                                action: () => window.open(coord.app?.link || '#', '_blank')
+                            }
+                        ]
+                    });
                 }
             });
     }
