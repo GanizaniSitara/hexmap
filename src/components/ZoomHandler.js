@@ -7,7 +7,8 @@ class ZoomHandler {
                     setCurrentZoomLevel,
                     resetHexagonsAndConnections,
                     topLevelOutlineGroup,
-                    setHoveredCluster
+                    setHoveredCluster,
+                    setContextMenu // Add setContextMenu here
                 }) {
         this.svg = svg;
         this.mainGroup = mainGroup;
@@ -15,6 +16,7 @@ class ZoomHandler {
         this.resetHexagonsAndConnections = resetHexagonsAndConnections;
         this.topLevelOutlineGroup = topLevelOutlineGroup;
         this.setHoveredCluster = setHoveredCluster;
+        this.setContextMenu = setContextMenu; // Store setContextMenu
 
         // Constants
         this.width = window.innerWidth;
@@ -41,6 +43,11 @@ class ZoomHandler {
     }
 
     handleZoom(event) {
+        // Close context menu on pan/zoom
+        if (this.setContextMenu) {
+            this.setContextMenu(prev => ({ ...prev, show: false }));
+        }
+
         this.mainGroup.attr("transform", event.transform);
 
         // Get previous zoom level for comparison
@@ -72,6 +79,11 @@ class ZoomHandler {
     }
 
     handleWheel(event) {
+        // Close context menu on wheel zoom
+        if (this.setContextMenu) {
+            this.setContextMenu(prev => ({ ...prev, show: false }));
+        }
+
         event.preventDefault();
         const currentTransform = d3.zoomTransform(this.svg.node());
         const currentScale = currentTransform.k;
