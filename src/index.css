@@ -11,3 +11,17 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.context-menu-item {
+    padding: 4px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.context-menu-item:last-child {
+    border-bottom: none; /* Remove border from the last item */
+}
+
+.context-menu-item:hover {
+    background-color: #f0f0f0; /* Light grey background on hover */
+}
