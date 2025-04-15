@@ -25,7 +25,8 @@
             { "to": "app2", "type": "data-flow", "strength": "high" },
             { "to": "app4", "type": "integration", "strength": "medium" },
             { "to": "app10", "type": "api", "strength": "low" }
-          ]
+          ],
+          "status": 83
         },
         {
           "id": "app2",
@@ -37,7 +38,8 @@
           "connections": [
             { "to": "app3", "type": "data-flow", "strength": "medium" },
             { "to": "app7", "type": "integration", "strength": "high" }
-          ]
+          ],
+          "status": 57
         },
         {
           "id": "app3",
@@ -47,7 +49,8 @@
           "gridPosition": { "q": -5, "r": -2 },
           "connections": [
             { "to": "app4", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 22
         },
         {
           "id": "app4",
@@ -59,7 +62,8 @@
           "connections": [
             { "to": "app5", "type": "data-flow", "strength": "high" },
             { "to": "app28", "type": "api", "strength": "medium" }
-          ]
+          ],
+          "status": 91
         },
         {
           "id": "app5",
@@ -69,7 +73,8 @@
           "gridPosition": { "q": -4, "r": -2 },
           "connections": [
             { "to": "app13", "type": "integration", "strength": "low" }
-          ]
+          ],
+          "status": 68
         },
         {
           "id": "finance-hex-1",
@@ -77,7 +82,8 @@
           "description": "Invoice management system",
           "color": "#4169E1",
           "gridPosition": { "q": -4, "r": -3 },
-          "connections": []
+          "connections": [],
+          "status": 45
         },
         {
           "id": "finance-hex-2",
@@ -85,7 +91,8 @@
           "description": "Tax reporting and compliance",
           "color": "#4169E1",
           "gridPosition": { "q": -3, "r": -2 },
-          "connections": []
+          "connections": [],
+          "status": 77
         },
         {
           "id": "finance-hex-3",
@@ -94,7 +101,8 @@
           "color": "#4169E1",
           "gridPosition": { "q": -6, "r": -3 },
           "showPositionIndicator": true,
-          "connections": []
+          "connections": [],
+          "status": 12
         },
         {
           "id": "finance-hex-4",
@@ -102,7 +110,8 @@
           "description": "Internal audit platform",
           "color": "#4169E1",
           "gridPosition": { "q": -2, "r": -3 },
-          "connections": []
+          "connections": [],
+          "status": 88
         },
         {
           "id": "finance-hex-5",
@@ -110,7 +119,8 @@
           "description": "Vendor management",
           "color": "#4169E1",
           "gridPosition": { "q": -5, "r": -3 },
-          "connections": []
+          "connections": [],
+          "status": 39
         },
         {
           "id": "finance-hex-6",
@@ -118,7 +128,8 @@
           "description": "Financial forecasting",
           "color": "#4169E1",
           "gridPosition": { "q": -2, "r": -2 },
-          "connections": []
+          "connections": [],
+          "status": 95
         },
         {
           "id": "finance-hex-7",
@@ -126,7 +137,8 @@
           "description": "Cost center management",
           "color": "#4169E1",
           "gridPosition": { "q": -3, "r": -3 },
-          "connections": []
+          "connections": [],
+          "status": 61
         }
       ]
     },
@@ -152,7 +164,8 @@
           "gridPosition": { "q": 7, "r": 1 },
           "connections": [
             { "to": "app8", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 72
         },
         {
           "id": "app7",
@@ -164,7 +177,8 @@
           "connections": [
             { "to": "app2", "type": "integration", "strength": "high" },
             { "to": "app6", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 8
         },
         {
           "id": "app8",
@@ -175,7 +189,8 @@
           "connections": [
             { "to": "app9", "type": "data-flow", "strength": "low" },
             { "to": "app30", "type": "api", "strength": "medium" }
-          ]
+          ],
+          "status": 50
         },
         {
           "id": "app9",
@@ -185,7 +200,8 @@
           "gridPosition": { "q": 6, "r": 1 },
           "connections": [
             { "to": "app29", "type": "integration", "strength": "medium" }
-          ]
+          ],
+          "status": 98
         },
         {
           "id": "hr-hex-1",
@@ -193,7 +209,8 @@
           "description": "Employee reviews and goals",
           "color": "#DC143C",
           "gridPosition": { "q": 7, "r": 2 },
-          "connections": []
+          "connections": [],
+          "status": 33
         },
         {
           "id": "hr-hex-2",
@@ -201,7 +218,8 @@
           "description": "Employee career pathing",
           "color": "#DC143C",
           "gridPosition": { "q": 5, "r": 2 },
-          "connections": []
+          "connections": [],
+          "status": 65
         },
         {
           "id": "hr-hex-3",
@@ -209,7 +227,8 @@
           "description": "Contact information database",
           "color": "#DC143C",
           "gridPosition": { "q": 6, "r": 2 },
-          "connections": []
+          "connections": [],
+          "status": 27
         },
         {
           "id": "hr-hex-4",
@@ -217,7 +236,8 @@
           "description": "Exit management",
           "color": "#DC143C",
           "gridPosition": { "q": 8, "r": 2 },
-          "connections": []
+          "connections": [],
+          "status": 81
         }
       ]
     },
@@ -246,7 +266,8 @@
             { "to": "app11", "type": "data-flow", "strength": "high" },
             { "to": "app12", "type": "integration", "strength": "high" },
             { "to": "app22", "type": "api", "strength": "medium" }
-          ]
+          ],
+          "status": 4
         },
         {
           "id": "app11",
@@ -256,7 +277,8 @@
           "gridPosition": { "q": 9, "r": -3 },
           "connections": [
             { "to": "app12", "type": "data-flow", "strength": "high" }
-          ]
+          ],
+          "status": 70
         },
         {
           "id": "app12",
@@ -266,7 +288,8 @@
           "gridPosition": { "q": 10, "r": -3 },
           "connections": [
             { "to": "app13", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 19
         },
         {
           "id": "app13",
@@ -278,7 +301,8 @@
           "connections": [
             { "to": "app14", "type": "data-flow", "strength": "medium" },
             { "to": "app28", "type": "integration", "strength": "high" }
-          ]
+          ],
+          "status": 85
         },
         {
           "id": "app14",
@@ -286,7 +310,8 @@
           "description": "Sales territory management",
           "color": "#32CD32",
           "gridPosition": { "q": 11, "r": -3 },
-          "connections": []
+          "connections": [],
+          "status": 53
         },
         {
           "id": "sales-hex-1",
@@ -294,7 +319,8 @@
           "description": "Deal pipeline management",
           "color": "#32CD32",
           "gridPosition": { "q": 13, "r": -2 },
-          "connections": []
+          "connections": [],
+          "status": 92
         },
         {
           "id": "sales-hex-2",
@@ -302,7 +328,8 @@
           "description": "Sales offerings database",
           "color": "#32CD32",
           "gridPosition": { "q": 10, "r": -2 },
-          "connections": []
+          "connections": [],
+          "status": 29
         },
         {
           "id": "sales-hex-3",
@@ -310,7 +337,8 @@
           "description": "Sales commission system",
           "color": "#32CD32",
           "gridPosition": { "q": 11, "r": -2 },
-          "connections": []
+          "connections": [],
+          "status": 74
         },
         {
           "id": "sales-hex-4",
@@ -318,7 +346,8 @@
           "description": "Lead qualification platform",
           "color": "#32CD32",
           "gridPosition": { "q": 12, "r": -2 },
-          "connections": []
+          "connections": [],
+          "status": 15
         },
         {
           "id": "sales-hex-5",
@@ -326,7 +355,8 @@
           "description": "Client access portal",
           "color": "#32CD32",
           "gridPosition": { "q": 12, "r": -3 },
-          "connections": []
+          "connections": [],
+          "status": 80
         }
       ]
     },
@@ -352,7 +382,8 @@
           "gridPosition": { "q": -5, "r": 4 },
           "connections": [
             { "to": "app16", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 42
         },
         {
           "id": "app16",
@@ -362,7 +393,8 @@
           "gridPosition": { "q": -4, "r": 4 },
           "connections": [
             { "to": "app17", "type": "integration", "strength": "low" }
-          ]
+          ],
+          "status": 99
         },
         {
           "id": "app17",
@@ -373,7 +405,8 @@
           "showPositionIndicator": true,
           "connections": [
             { "to": "app20", "type": "data-flow", "strength": "high" }
-          ]
+          ],
+          "status": 2
         },
         {
           "id": "app18",
@@ -384,7 +417,8 @@
           "connections": [
             { "to": "app19", "type": "integration", "strength": "high" },
             { "to": "app20", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 60
         },
         {
           "id": "app19",
@@ -394,7 +428,8 @@
           "gridPosition": { "q": -2, "r": 4 },
           "connections": [
             { "to": "app20", "type": "integration", "strength": "high" }
-          ]
+          ],
+          "status": 37
         },
         {
           "id": "app20",
@@ -403,7 +438,8 @@
           "color": "#9932CC",
           "gridPosition": { "q": -2, "r": 6 },
           "showPositionIndicator": true,
-          "connections": []
+          "connections": [],
+          "status": 87
         },
         {
           "id": "it-hex-1",
@@ -411,7 +447,8 @@
           "description": "Access control system",
           "color": "#9932CC",
           "gridPosition": { "q": -6, "r": 4 },
-          "connections": []
+          "connections": [],
+          "status": 55
         },
         {
           "id": "it-hex-2",
@@ -419,7 +456,8 @@
           "description": "Server infrastructure",
           "color": "#9932CC",
           "gridPosition": { "q": -4, "r": 5 },
-          "connections": []
+          "connections": [],
+          "status": 24
         },
         {
           "id": "it-hex-3",
@@ -427,7 +465,8 @@
           "description": "Database monitoring",
           "color": "#9932CC",
           "gridPosition": { "q": -5, "r": 5 },
-          "connections": []
+          "connections": [],
+          "status": 93
         },
         {
           "id": "it-hex-4",
@@ -435,7 +474,8 @@
           "description": "App ecosystem management",
           "color": "#9932CC",
           "gridPosition": { "q": -6, "r": 5 },
-          "connections": []
+          "connections": [],
+          "status": 69
         },
         {
           "id": "it-hex-5",
@@ -443,7 +483,8 @@
           "description": "API management platform",
           "color": "#9932CC",
           "gridPosition": { "q": -3, "r": 5 },
-          "connections": []
+          "connections": [],
+          "status": 11
         },
         {
           "id": "it-hex-6",
@@ -451,7 +492,8 @@
           "description": "Regulatory compliance",
           "color": "#9932CC",
           "gridPosition": { "q": -4, "r": 6 },
-          "connections": []
+          "connections": [],
+          "status": 78
         },
         {
           "id": "it-hex-7",
@@ -459,7 +501,8 @@
           "description": "Backup and recovery system",
           "color": "#9932CC",
           "gridPosition": { "q": -5, "r": 6 },
-          "connections": []
+          "connections": [],
+          "status": 48
         },
         {
           "id": "it-hex-8",
@@ -467,7 +510,8 @@
           "description": "IT change control system",
           "color": "#9932CC",
           "gridPosition": { "q": -3, "r": 6 },
-          "connections": []
+          "connections": [],
+          "status": 82
         }
       ]
     },
@@ -494,7 +538,8 @@
           "showPositionIndicator": true,
           "connections": [
             { "to": "app23", "type": "integration", "strength": "medium" }
-          ]
+          ],
+          "status": 5
         },
         {
           "id": "app22",
@@ -506,7 +551,8 @@
             { "to": "app23", "type": "data-flow", "strength": "high" },
             { "to": "app24", "type": "data-flow", "strength": "high" },
             { "to": "app10", "type": "api", "strength": "medium" }
-          ]
+          ],
+          "status": 71
         },
         {
           "id": "app23",
@@ -516,7 +562,8 @@
           "gridPosition": { "q": 6, "r": 7 },
           "connections": [
             { "to": "app24", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 30
         },
         {
           "id": "app24",
@@ -526,7 +573,8 @@
           "gridPosition": { "q": 7, "r": 7 },
           "connections": [
             { "to": "app28", "type": "integration", "strength": "medium" }
-          ]
+          ],
+          "status": 86
         },
         {
           "id": "marketing-hex-1",
@@ -534,7 +582,8 @@
           "description": "Media asset repository",
           "color": "#FF8C00",
           "gridPosition": { "q": 4, "r": 6 },
-          "connections": []
+          "connections": [],
+          "status": 54
         },
         {
           "id": "marketing-hex-2",
@@ -542,7 +591,8 @@
           "description": "Email marketing system",
           "color": "#FF8C00",
           "gridPosition": { "q": 4, "r": 7 },
-          "connections": []
+          "connections": [],
+          "status": 96
         },
         {
           "id": "marketing-hex-3",
@@ -550,7 +600,8 @@
           "description": "Brand guidelines system",
           "color": "#FF8C00",
           "gridPosition": { "q": 5, "r": 8 },
-          "connections": []
+          "connections": [],
+          "status": 20
         },
         {
           "id": "marketing-hex-4",
@@ -558,7 +609,8 @@
           "description": "Event planning platform",
           "color": "#FF8C00",
           "gridPosition": { "q": 7, "r": 6 },
-          "connections": []
+          "connections": [],
+          "status": 75
         },
         {
           "id": "marketing-hex-5",
@@ -566,7 +618,8 @@
           "description": "Search optimization",
           "color": "#FF8C00",
           "gridPosition": { "q": 6, "r": 6 },
-          "connections": []
+          "connections": [],
+          "status": 10
         }
       ]
     },
@@ -592,7 +645,8 @@
           "gridPosition": { "q": -9, "r": 0 },
           "connections": [
             { "to": "app26", "type": "data-flow", "strength": "high" }
-          ]
+          ],
+          "status": 84
         },
         {
           "id": "app26",
@@ -602,7 +656,8 @@
           "gridPosition": { "q": -9, "r": -6 },
           "connections": [
             { "to": "app27", "type": "integration", "strength": "low" }
-          ]
+          ],
+          "status": 58
         },
         {
           "id": "app27",
@@ -610,7 +665,8 @@
           "description": "Distributed ledger technologies",
           "color": "#1E90FF",
           "gridPosition": { "q": -10, "r": -6 },
-          "connections": []
+          "connections": [],
+          "status": 23
         },
         {
           "id": "app31",
@@ -618,8 +674,8 @@
           "description": "App to test collision detection",
           "color": "#1E90FF",
           "gridPosition": { "q": -9, "r": -0 },
-          "connections": [
-          ]
+          "connections": [],
+          "status": 90
         },
         {
           "id": "emerging-hex-1",
@@ -627,7 +683,8 @@
           "description": "Augmented reality research",
           "color": "#1E90FF",
           "gridPosition": { "q": -11, "r": -6 },
-          "connections": []
+          "connections": [],
+          "status": 67
         },
         {
           "id": "emerging-hex-2",
@@ -635,7 +692,8 @@
           "description": "Internet of Things framework",
           "color": "#1E90FF",
           "gridPosition": { "q": -11, "r": -5 },
-          "connections": []
+          "connections": [],
+          "status": 44
         }
       ]
     },
@@ -661,7 +719,8 @@
           "gridPosition": { "q": 2, "r": -8 },
           "connections": [
             { "to": "app29", "type": "data-flow", "strength": "medium" }
-          ]
+          ],
+          "status": 76
         },
         {
           "id": "app29",
@@ -672,7 +731,8 @@
           "showPositionIndicator": true,
           "connections": [
             { "to": "app30", "type": "integration", "strength": "medium" }
-          ]
+          ],
+          "status": 13
         },
         {
           "id": "app30",
@@ -680,7 +740,8 @@
           "description": "Enterprise project tracking",
           "color": "#8A2BE2",
           "gridPosition": { "q": 0, "r": -7 },
-          "connections": []
+          "connections": [],
+          "status": 89
         },
         {
           "id": "crossfunctional-hex-1",
@@ -688,7 +749,8 @@
           "description": "Cross-team collaboration platform",
           "color": "#8A2BE2",
           "gridPosition": { "q": 1, "r": -7 },
-          "connections": []
+          "connections": [],
+          "status": 40
         }
       ]
     }
