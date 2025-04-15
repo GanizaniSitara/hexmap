@@ -18,7 +18,8 @@ import {
     ConnectionLegend,
     ClusterLegend,
     ClusterInfoPanel,
-    ContextMenu
+    ContextMenu,
+    ToggleButton // Import the ToggleButton
 } from './ui/components';
 
 const HexMap = () => {
@@ -35,6 +36,9 @@ const HexMap = () => {
         y: 0,
         items: []
     });
+    
+    // Status toggle state
+    const [colorMode, setColorMode] = useState('Cluster');
 
     // Refs
     const timeoutIds = useRef([]);
@@ -88,7 +92,7 @@ const HexMap = () => {
                 tooltipManagerRef.current.cleanup();
             }
         };
-    }, []);
+    }, []); // Tooltip manager only needs to be created once
 
     // Update tooltip manager when zoom level changes
     useEffect(() => {
@@ -100,7 +104,9 @@ const HexMap = () => {
     useEffect(() => {
         if (!svgRef.current || !tooltipManagerRef.current) return;
 
+        // Store current zoom transform if any
         const svg = d3.select(svgRef.current);
+        const currentTransform = d3.zoomTransform(svg.node());
         svg.selectAll("*").remove();
 
         // Use the full browser window dimensions
@@ -164,7 +170,8 @@ const HexMap = () => {
             setSelectedCluster,
             tooltipManager: tooltipManagerRef.current,
             setHoveredCluster,
-            setContextMenu
+            setContextMenu,
+            colorMode
         });
 
         // Initialize ClusterManager
@@ -180,12 +187,11 @@ const HexMap = () => {
             .attr("class", "connections-group");
         connectionsGroupRef.current = connectionsGroup;
 
-        // Remove this line that's causing the error:
-        // zoomHandler.updateAbsoluteHexagonsVisibility(currentZoomLevel);
-
-        // Instead, if needed, call the cluster label update method:
-        if (zoomHandler.updateClusterLabelPositions) {
-            zoomHandler.updateClusterLabelPositions(currentZoomLevel);
+        // Restore previous zoom transform if it exists
+        if (currentTransform.k !== 1 || currentTransform.x !== 0 || currentTransform.y !== 0) {
+            svg.transition()
+                .duration(0) // Immediate transition
+                .call(zoomRef.current.transform, currentTransform);
         }
 
         return () => {
@@ -193,10 +199,26 @@ const HexMap = () => {
             timeoutIds.current.forEach(id => clearTimeout(id));
             timeoutIds.current.length = 0;
         };
-    }, []);
+    }, [colorMode]); // Re-render grid when colorMode changes
 
     return (
         <div className="relative" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+            {/* UI Overlays */}
+            {/* Color Mode Toggle - Top Middle (Visual Only) */}
+            <ToggleButton
+                option1="Cluster"
+                option2="Status"
+                currentOption={colorMode}
+                onToggle={setColorMode}
+                style={{ // Apply positioning directly
+                    position: 'fixed',
+                    top: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 1000
+                }}
+            />
+
             <svg
                 ref={svgRef}
                 style={{ width: '100vw', height: '100vh' }}
@@ -228,9 +250,7 @@ const HexMap = () => {
                 collisionsDetected={collisionsDetected}
             />
 
-            <ZoomStatus
-                currentZoomLevel={currentZoomLevel}
-            />
+            {/* <ZoomStatus currentZoomLevel={currentZoomLevel} /> */} {/* Moved to top-right */}
 
             <AppInfoPanel
                 hoveredApp={hoveredApp}
@@ -242,6 +262,30 @@ const HexMap = () => {
                 appConnections={appConnections}
                 currentZoomLevel={currentZoomLevel}
             />
+
+            {/* Position ZoomStatus in the top-right corner */}
+            <div className="absolute top-4 right-4 flex flex-col space-y-2">
+                <ZoomStatus currentZoomLevel={currentZoomLevel} />
+                {colorMode === 'Status' && (
+                    <div className="bg-white p-3 rounded-lg shadow-lg">
+                        <div className="font-semibold mb-2 text-sm">Status Legend</div>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: '#008000'}}></div>
+                                <span className="text-xs">High (66-100)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: '#FFA500'}}></div>
+                                <span className="text-xs">Medium (33-65)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: '#FF0000'}}></div>
+                                <span className="text-xs">Low (0-32)</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
 
             <ClusterInfoPanel
                 hoveredCluster={hoveredCluster}

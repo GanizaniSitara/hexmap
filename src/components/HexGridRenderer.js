@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import HexGrid from '../HexGrid';
 import { getLighterColor } from '../connectionUtils';
+import { getHexagonFillColor } from '../utils/colorUtils';
 
 class HexGridRenderer {
     constructor({
@@ -19,7 +20,8 @@ class HexGridRenderer {
                     setSelectedCluster,
                     tooltipManager,
                     setHoveredCluster,
-                    setContextMenu
+                    setContextMenu,
+                    colorMode
                 }) {
         this.svg = svg;
         this.mainGroup = mainGroup;
@@ -37,6 +39,7 @@ class HexGridRenderer {
         this.tooltipManager = tooltipManager;
         this.setHoveredCluster = setHoveredCluster;
         this.setContextMenu = setContextMenu;
+        this.colorMode = colorMode;
 
         // Constants
         this.width = window.innerWidth;
@@ -186,7 +189,7 @@ class HexGridRenderer {
         // Draw the hexagon with a stroke if there's a collision
         const hexPath = hexGroup.append("path")
             .attr("d", hexGrid.hexagonPath(hexSize))
-            .attr("fill", cluster.color)
+            .attr("fill", getHexagonFillColor({...coord, cluster}, this.colorMode))
             .attr("stroke", coord.hasCollision ? "#ff0000" : "#fff")
             .attr("stroke-width", coord.hasCollision ? 2 : 1)
             .attr("class", "hexagon");
@@ -335,7 +338,7 @@ class HexGridRenderer {
                 const currentZoom = d3.zoomTransform(this.svg.node()).k;
                 if (currentZoom >= 2.2) {
                     d3.select(event.currentTarget).select("path")
-                        .attr("fill", originalColor); // Return to original color
+                        .attr("fill", getHexagonFillColor({...coord, cluster}, this.colorMode));
 
                     // Hide tooltip
                     this.tooltipManager.hide();
