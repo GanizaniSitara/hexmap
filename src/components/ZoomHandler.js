@@ -67,10 +67,6 @@ class ZoomHandler {
             this.topLevelOutlineGroup.attr("opacity", 0);
         }
 
-        // Reset all hexagon colors when zooming out from detail to overview
-        if (previousZoomLevel >= 2.2 && event.transform.k < 2.2) {
-            this.resetHexagonsAndConnections();
-        }
 
         // Clear hovered cluster when changing zoom levels
         if (previousZoomLevel !== event.transform.k && this.setHoveredCluster) {
@@ -144,10 +140,6 @@ class ZoomHandler {
             this.topLevelOutlineGroup.attr("opacity", 0);
         }
 
-        // Reset all hexagon colors when zooming out from detail to overview
-        if (crossingThresholdDown) {
-            this.resetHexagonsAndConnections();
-        }
     }
 
     // Accessor for the zoom behavior
