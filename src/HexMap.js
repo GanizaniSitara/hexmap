@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import entityData from './data.json';
+import { getHexagonFillColor } from './utils/colorUtils';
 
 // Component imports
 import HexGridRenderer from './components/HexGridRenderer';
@@ -49,14 +50,22 @@ const HexMap = () => {
     const topLevelOutlineGroupRef = useRef(null);
     const tooltipManagerRef = useRef(null);
 
-    // Function to reset all hexagons to their original colors
+    // Function to reset all hexagons to their appropriate colors based on mode
     const resetHexagonsAndConnections = () => {
         if (entityData && entityData.clusters) {
             entityData.clusters.forEach(cluster => {
                 const clusterGroup = d3.select(`#cluster-${cluster.id}`);
                 if (clusterGroup.node()) { // Check if the element exists
                     clusterGroup.selectAll("path.hexagon")
-                        .attr("fill", cluster.color);
+                        .each(function(d) {
+                            // d3.select(this) refers to the current hexagon path
+                            const hexData = d3.select(this.parentNode).datum();
+                            d3.select(this).attr("fill", getHexagonFillColor({
+                                ...hexData,
+                                cluster,
+                                app: hexData?.app
+                            }, colorMode));
+                        });
                 }
             });
         }
