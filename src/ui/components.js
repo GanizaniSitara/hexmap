@@ -435,4 +435,94 @@ export const ClusterLegend = ({ entityData, selectedCluster, setSelectedCluster,
     );
 };
 
-export { ClusterInfoPanel, ContextMenu };
+// Styled Toggle Switch Component (Visual Only for now)
+export const ToggleButton = ({ label, option1, option2, currentOption, onToggle, style }) => {
+    const isOption1 = currentOption === option1;
+    
+    // Combine passed style with component defaults
+    const combinedStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        width: '180px', // Keep a fixed width for the toggle itself
+        position: 'relative', // Keep relative for inner absolute positioning
+        ...style // Merge styles passed from parent (like position, top, left, zIndex)
+    };
+
+    return (
+        <div style={combinedStyle}> {/* Use combined styles */}
+            {/* This div represents the pill background */}
+            <div style={{ 
+                display: 'flex',
+                backgroundColor: '#f3f4f6', // Light grey background for the pill track
+                borderRadius: '16px', // Rounded ends for the pill
+                padding: '2px', // Padding inside the track
+                width: '100%', // Take full width of the container
+                position: 'relative', // For positioning the slider
+                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)' // Subtle inner shadow for depth
+            }}>
+                {/* This div is the sliding blue indicator */}
+                <div style={{
+                    position: 'absolute',
+                    top: '2px', // Align with inner padding
+                    left: isOption1 ? '2px' : 'calc(50% + 1px)', // Position based on selection (adjusting for border/padding)
+                    width: 'calc(50% - 3px)', // Make it slightly less than half to fit padding
+                    height: 'calc(100% - 4px)', // Fit within the track padding
+                    backgroundColor: '#3b82f6', // Blue color for the active state
+                    borderRadius: '14px', // Slightly less rounded than the track
+                    transition: 'left 0.25s ease-in-out', // Smooth transition
+                    zIndex: 1, // Below the text
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.2)' // Slight shadow for the slider
+                }} />
+                {/* Button for Option 1 */}
+                <button
+                    onClick={() => onToggle && onToggle(option1)} // Call onToggle if provided
+                    style={{
+                        flex: 1, // Take up half the space
+                        padding: '5px 8px', // Adjust padding for vertical centering
+                        fontSize: '12px',
+                        fontWeight: 600, // Always bold
+                        color: isOption1 ? '#fff' : '#374151', // White text when active
+                        backgroundColor: 'transparent', // No background color
+                        border: 'none', // No border
+                        borderRadius: '14px', // Match slider rounding
+                        cursor: onToggle ? 'pointer' : 'default', // Change cursor if not interactive
+                        transition: 'color 0.25s ease-in-out',
+                        outline: 'none',
+                        position: 'relative', // Needed for zIndex
+                        zIndex: 2, // Above the slider
+                        textAlign: 'center'
+                    }}
+                    disabled={!onToggle} // Disable button if no handler
+                >
+                    {option1}
+                </button>
+                {/* Button for Option 2 */}
+                <button
+                    onClick={() => onToggle && onToggle(option2)} // Call onToggle if provided
+                    style={{
+                        flex: 1, // Take up half the space
+                        padding: '5px 8px', // Adjust padding
+                        fontSize: '12px',
+                        fontWeight: 600, // Always bold
+                        color: !isOption1 ? '#fff' : '#374151', // White text when active
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        borderRadius: '14px',
+                        cursor: onToggle ? 'pointer' : 'default', // Change cursor if not interactive
+                        transition: 'color 0.25s ease-in-out',
+                        outline: 'none',
+                        position: 'relative',
+                        zIndex: 2,
+                        textAlign: 'center'
+                    }}
+                    disabled={!onToggle} // Disable button if no handler
+                >
+                    {option2}
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
+export { ClusterInfoPanel, ContextMenu }; // Keep original exports
