@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/hexmap/static/css/main.964fdded.css",
-    "main.js": "/hexmap/static/js/main.4755c218.js",
+    "main.css": "/hexmap/static/css/main.9a968d33.css",
+    "main.js": "/hexmap/static/js/main.54f4ac66.js",
     "index.html": "/hexmap/index.html",
-    "main.964fdded.css.map": "/hexmap/static/css/main.964fdded.css.map",
-    "main.4755c218.js.map": "/hexmap/static/js/main.4755c218.js.map"
+    "main.9a968d33.css.map": "/hexmap/static/css/main.9a968d33.css.map",
+    "main.54f4ac66.js.map": "/hexmap/static/js/main.54f4ac66.js.map"
   },
   "entrypoints": [
-    "static/css/main.964fdded.css",
-    "static/js/main.4755c218.js"
+    "static/css/main.9a968d33.css",
+    "static/js/main.54f4ac66.js"
   ]
 }
