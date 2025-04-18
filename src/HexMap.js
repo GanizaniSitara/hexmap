@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as d3 from 'd3';
-import entityData from './data.json';
+import entityData from './data.json'; // Ensure entityData includes pillboxTooltip
 import { getHexagonFillColor } from './utils/colorUtils';
 
 // Component imports
@@ -49,6 +49,7 @@ const HexMap = () => {
     const appCoordinatesRef = useRef({});
     const topLevelOutlineGroupRef = useRef(null);
     const tooltipManagerRef = useRef(null);
+    const infoIconRef = useRef(null); // Ref for the info icon
 
     // Function to reset all hexagons to their appropriate colors based on mode
     const resetHexagonsAndConnections = () => {
@@ -210,23 +211,61 @@ const HexMap = () => {
         };
     }, [colorMode]); // Re-render grid when colorMode changes
 
+    // Tooltip handlers for the pillbox info icon
+    const handleInfoIconMouseEnter = useCallback((event) => {
+        if (tooltipManagerRef.current && entityData.pillboxTooltip) {
+            tooltipManagerRef.current.show(entityData.pillboxTooltip, event.target);
+        }
+    }, []); // Depends only on entityData which is static for this purpose
+
+    const handleInfoIconMouseLeave = useCallback(() => {
+        if (tooltipManagerRef.current) {
+            tooltipManagerRef.current.hide();
+        }
+    }, []);
+
     return (
         <div className="relative" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
             {/* UI Overlays */}
-            {/* Color Mode Toggle - Top Middle (Visual Only) */}
-            <ToggleButton
-                option1="Cluster"
-                option2="Status"
-                currentOption={colorMode}
-                onToggle={setColorMode}
-                style={{ // Apply positioning directly
-                    position: 'fixed',
+            {/* Color Mode Toggle with Info Icon - Top Middle */}
+            <div
+                // Outer container for fixed positioning and centering
+                style={{
+                    position: 'fixed', 
                     top: '20px',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    zIndex: 1000
+                    zIndex: 1000,
+                    padding: '4px',
+                    textAlign: 'center' // Center the inline blocks
                 }}
-            />
+            >
+                {/* Aligning ToggleButton and Icon using inline-block and vertical-align */}
+                <ToggleButton
+                    option1="Cluster"
+                    option2="Status"
+                    currentOption={colorMode}
+                    onToggle={setColorMode}
+                    style={{ display: 'inline-block', verticalAlign: 'middle' }} // Treat as inline block, align middle
+                />
+                {/* Info Icon also as inline-block aligned middle */}
+                <span
+                    ref={infoIconRef}
+                    className="material-icons-outlined text-gray-400 cursor-help" 
+                    style={{ 
+                        fontSize: '18px', 
+                        display: 'inline-block', // Treat as inline block
+                        verticalAlign: 'middle', // Align middle
+                        marginLeft: '4px'        // Add space
+                    }}
+                        onMouseEnter={handleInfoIconMouseEnter}
+                        onMouseLeave={handleInfoIconMouseLeave}
+                        title={entityData.pillboxTooltip} // Add native title for accessibility
+                    >
+                        info_outline
+                    </span>
+                {/* No inner wrapper div */}
+            </div> {/* Close the outer fixed positioning div */}
 
             <svg
                 ref={svgRef}
