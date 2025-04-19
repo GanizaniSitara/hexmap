@@ -211,18 +211,7 @@ const HexMap = () => {
         };
     }, [colorMode]); // Re-render grid when colorMode changes
 
-    // Tooltip handlers for the pillbox info icon
-    const handleInfoIconMouseEnter = useCallback((event) => {
-        if (tooltipManagerRef.current && entityData.pillboxTooltip) {
-            tooltipManagerRef.current.show(entityData.pillboxTooltip, event.target);
-        }
-    }, []); // Depends only on entityData which is static for this purpose
-
-    const handleInfoIconMouseLeave = useCallback(() => {
-        if (tooltipManagerRef.current) {
-            tooltipManagerRef.current.hide();
-        }
-    }, []);
+    // No custom handlers needed for the info icon anymore, rely on title attribute
 
     return (
         <div className="relative" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
@@ -251,21 +240,22 @@ const HexMap = () => {
                 {/* Info Icon also as inline-block aligned middle */}
                 <span
                     ref={infoIconRef}
-                    className="material-icons-outlined text-gray-400 cursor-help" 
+                    className="material-icons-outlined text-gray-500 cursor-help" // Changed text-gray-300 to text-gray-500
                     style={{ 
                         fontSize: '18px', 
-                        display: 'inline-block', // Treat as inline block
-                        verticalAlign: 'middle', // Align middle
-                        marginLeft: '4px'        // Add space
+                        display: 'inline-block', 
+                        verticalAlign: 'middle', 
+                        marginLeft: '4px'
                     }}
-                        onMouseEnter={handleInfoIconMouseEnter}
-                        onMouseLeave={handleInfoIconMouseLeave}
-                        title={entityData.pillboxTooltip} // Add native title for accessibility
+                        // Removed onMouseEnter and onMouseLeave
+                        title={entityData.pillboxTooltip} // Keep native title for accessibility
                     >
                         info_outline
                     </span>
                 {/* No inner wrapper div */}
             </div> {/* Close the outer fixed positioning div */}
+
+            {/* Removed dedicated tooltip div */}
 
             <svg
                 ref={svgRef}
