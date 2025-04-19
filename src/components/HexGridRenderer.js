@@ -259,13 +259,16 @@ class HexGridRenderer {
         hexGroup
             .on("mouseover", (event) => {
                 const currentZoom = d3.zoomTransform(this.svg.node()).k;
+                console.log(`Mouseover hex: ${coord.app?.name || 'Cluster hex'}, Zoom: ${currentZoom}`); // Log zoom level
                 // Only apply individual hexagon highlights at higher zoom levels
                 if (currentZoom >= 2.2) {
+                    console.log("Zoom level sufficient, attempting to show tooltip."); // Log attempt
                     d3.select(event.currentTarget).select("path")
                         .attr("fill", lighterColor); // Use lighter color instead of opacity
 
                     // Show tooltip for the hexagon
                     if (coord.app) {
+                        console.log(`Showing tooltip for app: ${coord.app.name}`); // Log app tooltip show
                         this.tooltipManager.show(coord.app.name, event);
 
                         // Set the hovered app for info display
@@ -316,11 +319,14 @@ class HexGridRenderer {
                         }
                     } else {
                         // Show tooltip for non-app hexagons
+                        console.log(`Showing tooltip for cluster: ${cluster.name}`); // Log cluster tooltip show
                         this.tooltipManager.show(`${cluster.name} Cluster`, event);
 
                         // No app associated with this hexagon, clear any connections
                         this.setAppConnections([]);
                     }
+                } else {
+                    console.log("Zoom level insufficient for tooltip."); // Log insufficient zoom
                 }
             })
             .on("mousemove", (event) => {

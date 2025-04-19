@@ -754,5 +754,6 @@
         }
       ]
     }
-  ]
+  ],
+  "pillboxTooltip": "Switch between viewing application clusters and their status."
 }
