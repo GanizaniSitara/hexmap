@@ -212,9 +212,9 @@ class HexGridRenderer {
             };
         }
 
-        // Add a small indicator dot only if showPositionIndicator is true for this app
+        // Add a small indicator dot only if showMarker is true for this app
         // Or if there's a collision (always show indicator for collisions)
-        if ((coord.app && coord.app.showPositionIndicator === true) || coord.hasCollision) {
+        if ((coord.app && coord.app.showMarker === true) || coord.hasCollision) {
             hexGroup.append("circle")
                 .attr("cx", 0)
                 .attr("cy", 0)
