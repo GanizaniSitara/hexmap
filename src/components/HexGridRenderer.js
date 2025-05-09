@@ -111,8 +111,8 @@ class HexGridRenderer {
 
             // Add cluster label
             clusterGroup.append("text")
-                .attr("x", clusterLabelPos.x)
-                .attr("y", clusterLabelPos.y - hexSize * 2)
+                .attr("x", clusterLabelPos.x - hexSize / 2)
+                .attr("y", clusterLabelPos.y - hexSize * 1.2)
                 .attr("text-anchor", "middle")
                 .attr("font-size", "14px")
                 .attr("font-weight", "bold")
