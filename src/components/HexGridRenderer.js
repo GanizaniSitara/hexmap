@@ -45,11 +45,208 @@ class HexGridRenderer {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
 
+        // Store label positions for collision detection
+        this.labelPositions = [];
+
         // Make entityData available globally for debugging
         window.entityData = entityData;
 
         // Initialize
         this.render();
+    }
+
+    /**
+     * Check if two bounding boxes overlap
+     */
+    boxesOverlap(box1, box2) {
+        return !(box1.right < box2.left ||
+                 box1.left > box2.right ||
+                 box1.bottom < box2.top ||
+                 box1.top > box2.bottom);
+    }
+
+    /**
+     * Calculate label bounding box given position and estimated dimensions
+     */
+    getLabelBoundingBox(x, y, text, fontSize = 14) {
+        // Estimate label width based on text length (approx 8px per character for bold 14px font)
+        const charWidth = fontSize * 0.6;
+        const width = text.length * charWidth;
+        const height = fontSize * 1.2;
+
+        return {
+            left: x - width / 2,
+            right: x + width / 2,
+            top: y - height,
+            bottom: y,
+            x: x,
+            y: y,
+            width: width,
+            height: height
+        };
+    }
+
+    /**
+     * Find the best white space position for a label around a cluster
+     */
+    findWhiteSpacePosition(clusterHexPositions, clusterCenter, text, existingLabels, hexSize) {
+        // Calculate bounding box of the cluster's hexagons
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+
+        clusterHexPositions.forEach(pos => {
+            minX = Math.min(minX, pos.x);
+            maxX = Math.max(maxX, pos.x);
+            minY = Math.min(minY, pos.y);
+            maxY = Math.max(maxY, pos.y);
+        });
+
+        // Add padding for hex size
+        const padding = hexSize * 1.5;
+        minX -= padding;
+        maxX += padding;
+        minY -= padding;
+        maxY += padding;
+
+        const clusterWidth = maxX - minX;
+        const clusterHeight = maxY - minY;
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+
+        // Label offset from cluster edge (tight to cluster)
+        const labelOffset = 8;
+
+        // Candidate positions in priority order (prefer top and sides over bottom)
+        const candidates = [
+            // Top center (preferred)
+            { x: centerX, y: minY - labelOffset, priority: 1 },
+            // Top left
+            { x: minX, y: minY - labelOffset, priority: 2 },
+            // Top right
+            { x: maxX, y: minY - labelOffset, priority: 2 },
+            // Left side (middle)
+            { x: minX - labelOffset - 30, y: centerY, priority: 3 },
+            // Right side (middle)
+            { x: maxX + labelOffset + 30, y: centerY, priority: 3 },
+            // Bottom center
+            { x: centerX, y: maxY + labelOffset + 12, priority: 4 },
+            // Bottom left
+            { x: minX, y: maxY + labelOffset + 12, priority: 5 },
+            // Bottom right
+            { x: maxX, y: maxY + labelOffset + 12, priority: 5 },
+        ];
+
+        // Function to check if position overlaps with any hexagon
+        const overlapsHexagons = (labelBox) => {
+            for (const hexPos of clusterHexPositions) {
+                const hexBox = {
+                    left: hexPos.x - hexSize,
+                    right: hexPos.x + hexSize,
+                    top: hexPos.y - hexSize,
+                    bottom: hexPos.y + hexSize
+                };
+                if (this.boxesOverlap(labelBox, hexBox)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        // Function to check if position overlaps with other clusters' hexagons
+        const overlapsOtherClusters = (labelBox) => {
+            if (!this.allHexPositions) return false;
+            for (const hexPos of this.allHexPositions) {
+                const hexBox = {
+                    left: hexPos.x - hexSize,
+                    right: hexPos.x + hexSize,
+                    top: hexPos.y - hexSize,
+                    bottom: hexPos.y + hexSize
+                };
+                if (this.boxesOverlap(labelBox, hexBox)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        // Find the best position
+        for (const candidate of candidates) {
+            const labelBox = this.getLabelBoundingBox(candidate.x, candidate.y, text);
+
+            // Check if overlaps with this cluster's hexagons
+            if (overlapsHexagons(labelBox)) {
+                continue;
+            }
+
+            // Check if overlaps with other clusters' hexagons
+            if (overlapsOtherClusters(labelBox)) {
+                continue;
+            }
+
+            // Check if overlaps with existing labels
+            const overlapsLabels = existingLabels.some(existing =>
+                this.boxesOverlap(labelBox, existing.box)
+            );
+            if (overlapsLabels) {
+                continue;
+            }
+
+            // Found a good position
+            return { x: candidate.x, y: candidate.y, box: labelBox };
+        }
+
+        // Fallback: use top center even if it overlaps (will be rendered on top anyway)
+        const fallbackX = centerX;
+        const fallbackY = minY - labelOffset;
+        const fallbackBox = this.getLabelBoundingBox(fallbackX, fallbackY, text);
+
+        return { x: fallbackX, y: fallbackY, box: fallbackBox };
+    }
+
+    /**
+     * Find a non-overlapping position for a label (legacy method, kept for compatibility)
+     */
+    findNonOverlappingPosition(x, y, text, existingPositions) {
+        const box = this.getLabelBoundingBox(x, y, text);
+
+        // Check if current position overlaps with any existing label
+        let hasOverlap = existingPositions.some(existing => this.boxesOverlap(box, existing.box));
+
+        if (!hasOverlap) {
+            return { x, y, box };
+        }
+
+        // Try different offset strategies to find non-overlapping position
+        // Prioritize horizontal offsets since vertical stacking is common
+        const offsets = [
+            { dx: -80, dy: 0 },    // Move left
+            { dx: 80, dy: 0 },     // Move right
+            { dx: -100, dy: -8 },  // Move left-up
+            { dx: 100, dy: -8 },   // Move right-up
+            { dx: -100, dy: 8 },   // Move left-down
+            { dx: 100, dy: 8 },    // Move right-down
+            { dx: -130, dy: 0 },   // Move further left
+            { dx: 130, dy: 0 },    // Move further right
+            { dx: 0, dy: -30 },    // Move up (last resort)
+            { dx: 0, dy: 30 },     // Move down (last resort)
+        ];
+
+        for (const offset of offsets) {
+            const newX = x + offset.dx;
+            const newY = y + offset.dy;
+            const newBox = this.getLabelBoundingBox(newX, newY, text);
+
+            const stillOverlaps = existingPositions.some(existing =>
+                this.boxesOverlap(newBox, existing.box)
+            );
+
+            if (!stillOverlaps) {
+                return { x: newX, y: newY, box: newBox };
+            }
+        }
+
+        // If all offsets fail, return original position (shouldn't happen often)
+        console.warn(`Could not find non-overlapping position for label: ${text}`);
+        return { x, y, box };
     }
 
     render() {
@@ -63,6 +260,12 @@ class HexGridRenderer {
         // Initialize an object to track occupied positions
         const occupiedPositions = {};
         const collisions = [];
+
+        // Store label data to render them all at the end (on top of hexagons)
+        const labelsToRender = [];
+
+        // Store hexagons with red borders to re-render on top
+        const redBorderHexagons = [];
 
         // Create a map to store app ID to coordinates mapping
         const appCoordinates = {};
@@ -79,6 +282,26 @@ class HexGridRenderer {
 
         // Store references to each cluster's hexagons for hover effects
         const clusterHexagons = {};
+
+        // First pass: calculate all hex coordinates to know all positions for label placement
+        const clusterHexCoords = {};
+        this.allHexPositions = []; // Store all hex positions for label collision detection
+
+        this.entityData.clusters.forEach(cluster => {
+            const hexCoords = hexGrid.generateHexCoords(
+                cluster.applications.length,
+                cluster.gridPosition.q,
+                cluster.gridPosition.r,
+                cluster.applications,
+                occupiedPositions
+            );
+            clusterHexCoords[cluster.id] = hexCoords;
+
+            // Add to global list for label collision detection
+            hexCoords.forEach(coord => {
+                this.allHexPositions.push({ x: coord.x, y: coord.y, clusterId: cluster.id });
+            });
+        });
 
         // Draw clusters and hexagons
         this.entityData.clusters.forEach(cluster => {
@@ -103,30 +326,37 @@ class HexGridRenderer {
             // Create an array to store this cluster's hexagon elements
             clusterHexagons[cluster.id] = [];
 
-            // Calculate cluster label position based on grid coordinates
-            const clusterLabelPos = hexGrid.gridToPixel(
-                cluster.gridPosition.q,
-                cluster.gridPosition.r
+            // Get pre-calculated hex coordinates for this cluster
+            const hexCoords = clusterHexCoords[cluster.id];
+
+            // Calculate cluster center from hex positions
+            const clusterCenter = {
+                x: hexCoords.reduce((sum, c) => sum + c.x, 0) / hexCoords.length,
+                y: hexCoords.reduce((sum, c) => sum + c.y, 0) / hexCoords.length
+            };
+
+            // Find best white space position for label
+            const labelPos = this.findWhiteSpacePosition(
+                hexCoords,
+                clusterCenter,
+                cluster.name,
+                this.labelPositions,
+                hexSize
             );
 
-            // Add cluster label
-            clusterGroup.append("text")
-                .attr("x", clusterLabelPos.x - hexSize / 2)
-                .attr("y", clusterLabelPos.y - hexSize * 1.2)
-                .attr("text-anchor", "middle")
-                .attr("font-size", "14px")
-                .attr("font-weight", "bold")
-                .attr("pointer-events", "none")
-                .attr("class", "cluster-label")
-                .text(cluster.name);
+            // Store the label position for future collision checks
+            this.labelPositions.push({
+                clusterId: cluster.id,
+                box: labelPos.box,
+                text: cluster.name
+            });
 
-            const hexCoords = hexGrid.generateHexCoords(
-                cluster.applications.length, // Use actual app count instead of hexCount
-                cluster.gridPosition.q,
-                cluster.gridPosition.r,
-                cluster.applications,
-                occupiedPositions
-            );
+            // Store label data to render later (on top of all hexagons)
+            labelsToRender.push({
+                x: labelPos.x,
+                y: labelPos.y,
+                text: cluster.name
+            });
 
             console.log(`Generated ${hexCoords.length} hex coordinates for cluster ${cluster.id}`);
 
@@ -145,7 +375,8 @@ class HexGridRenderer {
                     clusterData,
                     clusterHexagons,
                     appCoordinates,
-                    collisions
+                    collisions,
+                    redBorderHexagons
                 });
             });
 
@@ -157,6 +388,38 @@ class HexGridRenderer {
 
         // Save app coordinates for later use
         this.appCoordinatesRef.current = appCoordinates;
+
+        // Render red borders on top of all hexagons (so they're not covered by adjacent hexes)
+        if (redBorderHexagons.length > 0) {
+            const redBordersGroup = this.mainGroup.append("g")
+                .attr("class", "red-borders-group");
+
+            redBorderHexagons.forEach(hex => {
+                redBordersGroup.append("path")
+                    .attr("transform", `translate(${hex.x},${hex.y})`)
+                    .attr("d", hex.hexPath)
+                    .attr("fill", "none")
+                    .attr("stroke", "#ff0000")
+                    .attr("stroke-width", 2)
+                    .attr("pointer-events", "none");
+            });
+        }
+
+        // Render all labels in a separate group ON TOP of hexagons
+        const labelsGroup = this.mainGroup.append("g")
+            .attr("class", "cluster-labels-group");
+
+        labelsToRender.forEach(label => {
+            labelsGroup.append("text")
+                .attr("x", label.x)
+                .attr("y", label.y)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "14px")
+                .attr("font-weight", "bold")
+                .attr("pointer-events", "none")
+                .attr("class", "cluster-label")
+                .text(label.text);
+        });
 
         // Update the collisions list after all clusters are processed
         if (collisions.length > 0) {
@@ -175,7 +438,8 @@ class HexGridRenderer {
                       clusterData,
                       clusterHexagons,
                       appCoordinates,
-                      collisions
+                      collisions,
+                      redBorderHexagons
                   }) {
         const hexGroup = clusterGroup.append("g")
             .attr("transform", `translate(${coord.x},${coord.y})`)
@@ -186,13 +450,22 @@ class HexGridRenderer {
         // Store reference to hex group in cluster data
         clusterData.hexGroups.push(hexGroup);
 
-        // Draw the hexagon with a stroke if there's a collision
+        // Draw the hexagon - use white stroke for all, red borders will be added on top later
         const hexPath = hexGroup.append("path")
             .attr("d", hexGrid.hexagonPath(hexSize))
             .attr("fill", getHexagonFillColor({...coord, cluster}, this.colorMode))
-            .attr("stroke", coord.hasCollision ? "#ff0000" : "#fff")
-            .attr("stroke-width", coord.hasCollision ? 2 : 1)
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1)
             .attr("class", "hexagon");
+
+        // Track hexagons with collisions to render red borders on top later
+        if (coord.hasCollision) {
+            redBorderHexagons.push({
+                x: coord.x,
+                y: coord.y,
+                hexPath: hexGrid.hexagonPath(hexSize)
+            });
+        }
 
         // Store reference to this hexagon
         clusterHexagons[cluster.id].push(hexPath);
@@ -212,9 +485,9 @@ class HexGridRenderer {
             };
         }
 
-        // Add a small indicator dot only if showMarker is true for this app
+        // Add a small indicator dot only if showPositionIndicator is true for this app
         // Or if there's a collision (always show indicator for collisions)
-        if ((coord.app && coord.app.showMarker === true) || coord.hasCollision) {
+        if ((coord.app && coord.app.showPositionIndicator === true) || coord.hasCollision) {
             hexGroup.append("circle")
                 .attr("cx", 0)
                 .attr("cy", 0)
@@ -259,16 +532,13 @@ class HexGridRenderer {
         hexGroup
             .on("mouseover", (event) => {
                 const currentZoom = d3.zoomTransform(this.svg.node()).k;
-                console.log(`Mouseover hex: ${coord.app?.name || 'Cluster hex'}, Zoom: ${currentZoom}`); // Log zoom level
                 // Only apply individual hexagon highlights at higher zoom levels
                 if (currentZoom >= 2.2) {
-                    console.log("Zoom level sufficient, attempting to show tooltip."); // Log attempt
                     d3.select(event.currentTarget).select("path")
                         .attr("fill", lighterColor); // Use lighter color instead of opacity
 
                     // Show tooltip for the hexagon
                     if (coord.app) {
-                        console.log(`Showing tooltip for app: ${coord.app.name}`); // Log app tooltip show
                         this.tooltipManager.show(coord.app.name, event);
 
                         // Set the hovered app for info display
@@ -319,14 +589,11 @@ class HexGridRenderer {
                         }
                     } else {
                         // Show tooltip for non-app hexagons
-                        console.log(`Showing tooltip for cluster: ${cluster.name}`); // Log cluster tooltip show
                         this.tooltipManager.show(`${cluster.name} Cluster`, event);
 
                         // No app associated with this hexagon, clear any connections
                         this.setAppConnections([]);
                     }
-                } else {
-                    console.log("Zoom level insufficient for tooltip."); // Log insufficient zoom
                 }
             })
             .on("mousemove", (event) => {
