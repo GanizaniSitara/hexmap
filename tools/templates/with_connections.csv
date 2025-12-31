@@ -1,0 +1,15 @@
+app_name,cluster,status,description,connects_to
+Finance Store,Finance,100,Main financial data repository,Shared Views;Castle NYK
+Castle NYK,Finance,85,New York trading system,Regal Data Store
+Regal Data Store,Finance,90,Regulatory data warehouse,
+Shared Views,Finance,95,Shared reporting dashboards,
+MOTIF,Operations,100,Trade execution platform,Finance Store
+TDB,Operations,75,Transaction database,MOTIF;CREDS
+CREDS,Operations,80,Credentials management,
+FISCUS,Risk,100,Fiscal risk calculator,QRM
+QRM,Risk,90,Quantitative risk models,
+Liquidity Reporting,Risk,85,Daily liquidity reports,FISCUS
+CCAR Data Store,Compliance,100,CCAR data repository,CCAR Model Services
+CCAR Model Services,Compliance,95,Model execution engine,
+Ops Risk Controls,Controls,70,Operational risk tracking,Controls Data Store
+Controls Data Store,Controls,65,Control documentation,

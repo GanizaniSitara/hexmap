@@ -27,12 +27,15 @@ class HexGrid {
         const adjustedX = x - centerOffsetX;
         const adjustedY = y - centerOffsetY;
 
-        const q = (adjustedX * Math.sqrt(3)/3 - adjustedY / 3) / this.hexSize;
-        const r = adjustedY * 2/3 / this.hexSize;
-        return {
-            q: Math.round(q),
-            r: Math.round(r)
-        };
+        // First, calculate r from y (this is straightforward)
+        const r = Math.round(adjustedY * 2/3 / this.hexSize);
+
+        // Now calculate q, accounting for the odd-row offset
+        // For odd rows, we need to subtract the 0.5 offset before rounding
+        const qFloat = adjustedX / (this.hexSize * Math.sqrt(3)) - 0.5 * (r & 1);
+        const q = Math.round(qFloat);
+
+        return { q, r };
     }
 
     // Generate hexagon path
