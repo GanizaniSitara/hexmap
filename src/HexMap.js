@@ -282,6 +282,7 @@ const HexMap = () => {
                 setSelectedCluster={setSelectedCluster}
                 svgRef={svgRef}
                 zoomRef={zoomRef}
+                colorMode={colorMode}
             />
 
             <CollisionNotification

@@ -329,8 +329,9 @@ export const ConnectionLegend = ({ appConnections, currentZoomLevel }) => {
 };
 
 // Render the cluster legend
-export const ClusterLegend = ({ entityData, selectedCluster, setSelectedCluster, svgRef, zoomRef }) => {
-    if (!entityData || !entityData.clusters) return null;
+export const ClusterLegend = ({ entityData, selectedCluster, setSelectedCluster, svgRef, zoomRef, colorMode }) => {
+    // Hide cluster legend in Status mode (status legend is shown elsewhere)
+    if (!entityData || !entityData.clusters || colorMode === 'Status') return null;
 
     if (selectedCluster) {
         return (
