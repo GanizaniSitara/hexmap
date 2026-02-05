@@ -1,0 +1,39 @@
+name,sys_class_name,category,subcategory,short_description,operational_status,owned_by,department,business_unit,version,vendor,depends_on
+SAP ERP,cmdb_ci_business_app,ERP,Finance,Core enterprise resource planning system,Operational,Sarah Johnson,Finance,Financial Services,4.2.1,SAP,Oracle Database;SAP HANA
+Payroll System,cmdb_ci_business_app,HR,Payroll,Employee payment processing and tax withholding,Operational,Mark Thompson,HR,Human Resources,3.8.0,ADP,SAP ERP;Employee Database
+Expense Management,cmdb_ci_business_app,Finance,Expense,Business expense management and reimbursements,Operational,Lisa Park,Finance,Financial Services,2.1.3,Concur,SAP ERP
+Financial Reporting,cmdb_ci_business_app,Finance,Reporting,Regulatory reporting for SEC and GAAP compliance,Operational,Sarah Johnson,Finance,Financial Services,5.0.2,Hyperion,SAP ERP;Data Warehouse
+Budgeting Tool,cmdb_ci_business_app,Finance,Planning,Annual budget planning and variance analysis,Operational,James Lee,Finance,Financial Services,2.5.0,Adaptive Planning,Financial Reporting
+Invoice Processing,cmdb_ci_business_app,Finance,AP,Automated invoice management and three-way matching,Operational,Lisa Park,Finance,Financial Services,1.9.4,Coupa,SAP ERP
+Tax Compliance Engine,cmdb_ci_business_app,Finance,Tax,Multi-jurisdiction tax calculation and filing,Operational,Mark Thompson,Finance,Financial Services,3.1.0,Thomson Reuters,SAP ERP;Financial Reporting
+Recruiting Platform,cmdb_ci_business_app,HR,Talent,Applicant tracking and interview scheduling,Operational,Michael Chen,HR,Human Resources,6.1.0,Greenhouse,Employee Database
+Benefits Admin,cmdb_ci_business_app,HR,Benefits,Health insurance and 401k administration,Repair in Progress,Amy Walsh,HR,Human Resources,4.0.3,Benefitfocus,Employee Database;Payroll System
+Time Tracking,cmdb_ci_business_app,HR,Workforce,Timesheets and PTO tracking,Operational,Michael Chen,HR,Human Resources,3.2.1,Kronos,Employee Database
+Learning Management,cmdb_ci_business_app,HR,Training,Course catalog and compliance training,Operational,Amy Walsh,HR,Human Resources,5.3.0,Cornerstone,Employee Database
+Employee Database,cmdb_ci_business_app,HR,Core,Employee master data and org structure,Operational,Michael Chen,HR,Human Resources,8.0.0,Workday,
+Salesforce CRM,cmdb_ci_business_app,Sales,CRM,Customer relationship management and pipeline,Operational,Jessica Martinez,Sales,Revenue Operations,23.1.0,Salesforce,Customer Database
+Quote System,cmdb_ci_business_app,Sales,CPQ,Sales quote generation with pricing rules,Operational,Tom Richards,Sales,Revenue Operations,2.4.0,Salesforce CPQ,Salesforce CRM
+Contract Manager,cmdb_ci_business_app,Sales,Legal,Contract lifecycle tracking and e-signatures,Non-Operational,Jessica Martinez,Sales,Revenue Operations,3.7.2,DocuSign,Quote System
+Sales Analytics,cmdb_ci_business_app,Sales,Analytics,Pipeline dashboards and win/loss analysis,Operational,Tom Richards,Sales,Revenue Operations,4.1.0,Tableau,Salesforce CRM;Data Warehouse
+Marketing Automation,cmdb_ci_business_app,Marketing,Campaign,Campaign management and email workflows,Operational,Nina Brooks,Marketing,Marketing & Communications,6.3.2,HubSpot,Salesforce CRM;Customer Database
+Content Management System,cmdb_ci_business_app,Marketing,Content,Web content publishing and versioning,Operational,Amanda Rodriguez,Marketing,Marketing & Communications,9.1.0,WordPress VIP,
+Social Media Manager,cmdb_ci_business_app,Marketing,Social,Social scheduling and sentiment analysis,Operational,Amanda Rodriguez,Marketing,Marketing & Communications,4.2.0,Sprout Social,Marketing Automation
+Marketing Analytics,cmdb_ci_business_app,Marketing,Analytics,Attribution modeling and ROI analysis,Operational,Nina Brooks,Marketing,Marketing & Communications,5.0.1,Google Analytics,Data Warehouse
+ServiceNow ITSM,cmdb_ci_business_app,IT,Service Management,IT support ticketing and SLA tracking,Operational,David Wilson,IT,Information Technology,8.2.0,ServiceNow,
+Asset Management,cmdb_ci_business_app,IT,CMDB,Hardware/software lifecycle and license compliance,Operational,Karen White,IT,Information Technology,4.5.1,ServiceNow,ServiceNow ITSM
+Identity Management,cmdb_ci_business_app,IT,Security,SSO and MFA with role-based access,Operational,David Wilson,IT,Information Technology,5.2.0,Okta,
+Change Management,cmdb_ci_business_app,IT,ITSM,CAB approvals and impact analysis,Operational,Karen White,IT,Information Technology,5.0.0,ServiceNow,ServiceNow ITSM
+Customer Database,cmdb_ci_business_app,Data,Master Data,Customer master data repository,Operational,Lauren Taylor,Enterprise,Enterprise Systems,6.2.0,Custom,Data Warehouse
+Data Warehouse,cmdb_ci_business_app,Data,Analytics,Enterprise data lake and ETL,Operational,Lauren Taylor,Enterprise,Enterprise Systems,3.5.0,Snowflake,
+Project Management,cmdb_ci_business_app,Collaboration,PM,Gantt charts and resource allocation,Operational,Lauren Taylor,Enterprise,Enterprise Systems,3.6.0,Jira,
+Customer Support Portal,cmdb_ci_business_app,Service,Support,Customer ticket management and knowledge base,Operational,Lauren Taylor,Enterprise,Enterprise Systems,4.8.0,Zendesk,Customer Database;Salesforce CRM
+Oracle Database,cmdb_ci_db_ora_instance,Database,RDBMS,Primary Oracle database cluster,Operational,David Wilson,IT,Information Technology,19.3,,
+SAP HANA,cmdb_ci_database,Database,In-Memory,SAP HANA in-memory database,Operational,David Wilson,IT,Information Technology,2.0,,
+Snowflake DW,cmdb_ci_cloud_database,Database,Cloud,Cloud data warehouse infrastructure,Operational,Karen White,IT,Information Technology,,,
+Kubernetes Cluster,cmdb_ci_kubernetes_cluster,Infrastructure,Container,Production Kubernetes cluster,Operational,Karen White,IT,Information Technology,1.28,,
+AWS Account,cmdb_ci_cloud_service_account,Infrastructure,Cloud,Primary AWS cloud account,Operational,David Wilson,IT,Information Technology,,,Amazon
+Load Balancer F5,cmdb_ci_lb,Infrastructure,Network,F5 application load balancer,Operational,David Wilson,IT,Information Technology,16.1,,F5
+Datadog Monitoring,cmdb_ci_appl,Infrastructure,Monitoring,Infrastructure monitoring and APM,Operational,Karen White,IT,Information Technology,,,Datadog
+Splunk SIEM,cmdb_ci_appl,Security,SIEM,Security event monitoring and threat detection,Operational,Karen White,IT,Information Technology,9.0,,Splunk
+Jenkins CI/CD,cmdb_ci_app_server,Infrastructure,DevOps,Continuous integration and deployment,Operational,Karen White,IT,Information Technology,2.414,,Jenkins
+GitLab,cmdb_ci_appl,Infrastructure,DevOps,Source code management and CI/CD,Operational,Karen White,IT,Information Technology,16.5,,GitLab
