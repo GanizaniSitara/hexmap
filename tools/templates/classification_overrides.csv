@@ -1,0 +1,6 @@
+app_name,is_business,domain
+Snowflake DW,false,Infrastructure
+Datadog Monitoring,false,Infrastructure
+Splunk SIEM,false,Infrastructure
+Data Warehouse,true,Data & Analytics
+Customer Database,true,Data & Analytics
