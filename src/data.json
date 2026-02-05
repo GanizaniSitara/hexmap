@@ -17,7 +17,7 @@
         {
           "id": "app1",
           "name": "Accounting System",
-          "description": "Core accounting platform",
+          "description": "Core accounting platform for general ledger, accounts payable/receivable, and financial close processes.",
           "color": "#4169E1",
           "gridPosition": { "q": -5, "r": -1 },
           "showMarker": true,
@@ -26,12 +26,18 @@
             { "to": "app4", "type": "integration", "strength": "medium" },
             { "to": "app10", "type": "api", "strength": "low" }
           ],
-          "status": 83
+          "status": 83,
+          "version": "4.2.1",
+          "owner": "Sarah Johnson",
+          "techStack": ["SAP", "Oracle DB", "Java"],
+          "uptime": 99.7,
+          "lastDeployment": "2025-03-01",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app1.html"
         },
         {
           "id": "app2",
           "name": "Payroll",
-          "description": "Employee payment processing",
+          "description": "Employee payment processing handling salary calculations, tax withholdings, and direct deposits.",
           "color": "#4169E1",
           "gridPosition": { "q": -1, "r": -2 },
           "showMarker": false,
@@ -39,24 +45,36 @@
             { "to": "app3", "type": "data-flow", "strength": "medium" },
             { "to": "app7", "type": "integration", "strength": "high" }
           ],
-          "status": 57
+          "status": 57,
+          "version": "3.8.0",
+          "owner": "Mark Thompson",
+          "techStack": ["ADP Workforce", ".NET", "SQL Server"],
+          "uptime": 99.9,
+          "lastDeployment": "2025-02-20",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app2.html"
         },
         {
           "id": "app3",
           "name": "Expense Tracking",
-          "description": "Business expense management",
+          "description": "Business expense management for employee reimbursements, corporate card reconciliation, and policy enforcement.",
           "color": "#4169E1",
           "gridPosition": { "q": -5, "r": -2 },
           "showMarker": false,
           "connections": [
             { "to": "app4", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 22
+          "status": 22,
+          "version": "2.1.3",
+          "owner": "Lisa Park",
+          "techStack": ["Concur", "React", "PostgreSQL"],
+          "uptime": 97.2,
+          "lastDeployment": "2025-01-15",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app3.html"
         },
         {
           "id": "app4",
           "name": "Financial Reporting",
-          "description": "Regulatory reporting system",
+          "description": "Regulatory reporting system for SEC filings, GAAP compliance, and internal management reports.",
           "color": "#4169E1",
           "gridPosition": { "q": -2, "r": -1 },
           "showMarker": true,
@@ -64,89 +82,143 @@
             { "to": "app5", "type": "data-flow", "strength": "high" },
             { "to": "app28", "type": "api", "strength": "medium" }
           ],
-          "status": 91
+          "status": 91,
+          "version": "5.0.2",
+          "owner": "Sarah Johnson",
+          "techStack": ["Hyperion", "Python", "Snowflake"],
+          "uptime": 99.5,
+          "lastDeployment": "2025-03-10",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app4.html"
         },
         {
           "id": "app5",
           "name": "Budgeting",
-          "description": "Annual budget planning",
+          "description": "Annual budget planning and variance analysis across all departments.",
           "color": "#4169E1",
           "gridPosition": { "q": -4, "r": -2 },
           "showMarker": false,
           "connections": [
             { "to": "app13", "type": "integration", "strength": "low" }
           ],
-          "status": 68
+          "status": 68,
+          "version": "2.5.0",
+          "owner": "James Lee",
+          "techStack": ["Adaptive Planning", "React", "Node.js"],
+          "uptime": 98.8,
+          "lastDeployment": "2025-02-28",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app5.html"
         },
         {
           "id": "finance-hex-1",
           "name": "Invoice Processing",
-          "description": "Invoice management system",
+          "description": "Automated invoice management for vendor payments, three-way matching, and approval workflows.",
           "color": "#4169E1",
           "gridPosition": { "q": -4, "r": -3 },
           "showMarker": false,
           "connections": [],
-          "status": 45
+          "status": 45,
+          "version": "1.9.4",
+          "owner": "Lisa Park",
+          "techStack": ["Coupa", "Java", "MongoDB"],
+          "uptime": 98.1,
+          "lastDeployment": "2025-02-10",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/finance-hex-1.html"
         },
         {
           "id": "finance-hex-2",
           "name": "Tax Compliance",
-          "description": "Tax reporting and compliance",
+          "description": "Tax reporting and compliance engine for multi-jurisdiction tax calculation and filing.",
           "color": "#4169E1",
           "gridPosition": { "q": -3, "r": -2 },
           "showMarker": false,
           "connections": [],
-          "status": 77
+          "status": 77,
+          "version": "3.1.0",
+          "owner": "Mark Thompson",
+          "techStack": ["Thomson Reuters", "C#", "Azure SQL"],
+          "uptime": 99.3,
+          "lastDeployment": "2025-03-05",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/finance-hex-2.html"
         },
         {
           "id": "finance-hex-3",
           "name": "Cash Management",
-          "description": "Cash flow monitoring",
+          "description": "Cash flow monitoring, bank reconciliation, and liquidity forecasting across accounts.",
           "color": "#4169E1",
           "gridPosition": { "q": -6, "r": -3 },
           "showMarker": true,
           "connections": [],
-          "status": 12
+          "status": 12,
+          "version": "1.4.2",
+          "owner": "Sarah Johnson",
+          "techStack": ["Kyriba", "Python", "Redis"],
+          "uptime": 95.8,
+          "lastDeployment": "2024-12-20",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/finance-hex-3.html"
         },
         {
           "id": "finance-hex-4",
           "name": "Audit Tools",
-          "description": "Internal audit platform",
+          "description": "Internal audit platform for SOX compliance, control testing, and audit trail management.",
           "color": "#4169E1",
           "gridPosition": { "q": -2, "r": -3 },
           "showMarker": false,
           "connections": [],
-          "status": 88
+          "status": 88,
+          "version": "2.3.1",
+          "owner": "James Lee",
+          "techStack": ["AuditBoard", "React", "PostgreSQL"],
+          "uptime": 99.1,
+          "lastDeployment": "2025-03-12",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/finance-hex-4.html"
         },
         {
           "id": "finance-hex-5",
           "name": "Procurement Portal",
-          "description": "Vendor management",
+          "description": "Vendor management and purchase order workflows with approval chains.",
           "color": "#4169E1",
           "gridPosition": { "q": -5, "r": -3 },
           "showMarker": false,
           "connections": [],
-          "status": 39
+          "status": 39,
+          "version": "2.0.5",
+          "owner": "Lisa Park",
+          "techStack": ["Ariba", "Angular", "MySQL"],
+          "uptime": 97.6,
+          "lastDeployment": "2025-01-30",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/finance-hex-5.html"
         },
         {
           "id": "finance-hex-6",
           "name": "Forecasting Tool",
-          "description": "Financial forecasting",
+          "description": "Financial forecasting with ML-driven scenario modeling and trend analysis.",
           "color": "#4169E1",
           "gridPosition": { "q": -2, "r": -2 },
           "showMarker": false,
           "connections": [],
-          "status": 95
+          "status": 95,
+          "version": "1.7.0",
+          "owner": "James Lee",
+          "techStack": ["Python", "TensorFlow", "Snowflake"],
+          "uptime": 99.4,
+          "lastDeployment": "2025-03-14",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/finance-hex-6.html"
         },
         {
           "id": "finance-hex-7",
           "name": "Cost Allocation",
-          "description": "Cost center management",
+          "description": "Cost center management and allocation rules for shared services and overhead.",
           "color": "#4169E1",
           "gridPosition": { "q": -3, "r": -3 },
           "showMarker": false,
           "connections": [],
-          "status": 61
+          "status": 61,
+          "version": "1.2.3",
+          "owner": "Mark Thompson",
+          "techStack": ["SAP", "ABAP", "HANA"],
+          "uptime": 98.5,
+          "lastDeployment": "2025-02-05",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/finance-hex-7.html"
         }
       ]
     },
@@ -167,19 +239,25 @@
         {
           "id": "app6",
           "name": "Recruiting",
-          "description": "Applicant tracking system",
+          "description": "Applicant tracking system managing job postings, candidate pipelines, and interview scheduling.",
           "color": "#DC143C",
           "gridPosition": { "q": 7, "r": 1 },
           "showMarker": false,
           "connections": [
             { "to": "app8", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 72
+          "status": 72,
+          "version": "6.1.0",
+          "owner": "Michael Chen",
+          "techStack": ["Greenhouse", "React", "PostgreSQL"],
+          "uptime": 99.2,
+          "lastDeployment": "2025-03-08",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app6.html"
         },
         {
           "id": "app7",
           "name": "Benefits",
-          "description": "Employee benefits management",
+          "description": "Employee benefits management for health insurance, 401k, and wellness programs.",
           "color": "#DC143C",
           "gridPosition": { "q": 4, "r": 1 },
           "showMarker": false,
@@ -187,12 +265,18 @@
             { "to": "app2", "type": "integration", "strength": "high" },
             { "to": "app6", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 8
+          "status": 8,
+          "version": "4.0.3",
+          "owner": "Amy Walsh",
+          "techStack": ["Benefitfocus", ".NET", "SQL Server"],
+          "uptime": 96.5,
+          "lastDeployment": "2025-01-22",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app7.html"
         },
         {
           "id": "app8",
           "name": "Time Tracking",
-          "description": "Employee time management",
+          "description": "Employee time management for timesheets, PTO tracking, and attendance reporting.",
           "color": "#DC143C",
           "gridPosition": { "q": 5, "r": 1 },
           "showMarker": false,
@@ -200,59 +284,95 @@
             { "to": "app9", "type": "data-flow", "strength": "low" },
             { "to": "app30", "type": "api", "strength": "medium" }
           ],
-          "status": 50
+          "status": 50,
+          "version": "3.2.1",
+          "owner": "Michael Chen",
+          "techStack": ["Kronos", "Java", "MySQL"],
+          "uptime": 98.7,
+          "lastDeployment": "2025-02-18",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app8.html"
         },
         {
           "id": "app9",
           "name": "Learning",
-          "description": "Employee training platform",
+          "description": "Employee training platform with course catalog, certifications, and compliance training.",
           "color": "#DC143C",
           "gridPosition": { "q": 6, "r": 1 },
           "showMarker": false,
           "connections": [
             { "to": "app29", "type": "integration", "strength": "medium" }
           ],
-          "status": 98
+          "status": 98,
+          "version": "5.3.0",
+          "owner": "Amy Walsh",
+          "techStack": ["Cornerstone", "Vue.js", "MongoDB"],
+          "uptime": 99.8,
+          "lastDeployment": "2025-03-15",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app9.html"
         },
         {
           "id": "hr-hex-1",
           "name": "Performance Management",
-          "description": "Employee reviews and goals",
+          "description": "Employee reviews, goal setting, and 360-degree feedback processes.",
           "color": "#DC143C",
           "gridPosition": { "q": 7, "r": 2 },
           "showMarker": false,
           "connections": [],
-          "status": 33
+          "status": 33,
+          "version": "2.8.1",
+          "owner": "Michael Chen",
+          "techStack": ["Workday", "React", "GraphQL"],
+          "uptime": 97.9,
+          "lastDeployment": "2025-02-01",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/hr-hex-1.html"
         },
         {
           "id": "hr-hex-2",
           "name": "Career Development",
-          "description": "Employee career pathing",
+          "description": "Employee career pathing, skills assessment, and mentorship matching.",
           "color": "#DC143C",
           "gridPosition": { "q": 5, "r": 2 },
           "showMarker": false,
           "connections": [],
-          "status": 65
+          "status": 65,
+          "version": "1.5.2",
+          "owner": "Amy Walsh",
+          "techStack": ["Custom", "Next.js", "Prisma"],
+          "uptime": 98.3,
+          "lastDeployment": "2025-02-25",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/hr-hex-2.html"
         },
         {
           "id": "hr-hex-3",
           "name": "Employee Directory",
-          "description": "Contact information database",
+          "description": "Contact information database with org chart and team structure visualization.",
           "color": "#DC143C",
           "gridPosition": { "q": 6, "r": 2 },
           "showMarker": false,
           "connections": [],
-          "status": 27
+          "status": 27,
+          "version": "3.0.0",
+          "owner": "Michael Chen",
+          "techStack": ["Azure AD", "React", "Elasticsearch"],
+          "uptime": 97.1,
+          "lastDeployment": "2025-01-10",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/hr-hex-3.html"
         },
         {
           "id": "hr-hex-4",
           "name": "Offboarding Process",
-          "description": "Exit management",
+          "description": "Exit management with asset recovery, access revocation, and knowledge transfer workflows.",
           "color": "#DC143C",
           "gridPosition": { "q": 8, "r": 2 },
           "showMarker": false,
           "connections": [],
-          "status": 81
+          "status": 81,
+          "version": "1.1.0",
+          "owner": "Amy Walsh",
+          "techStack": ["ServiceNow", "Angular", "PostgreSQL"],
+          "uptime": 99.0,
+          "lastDeployment": "2025-03-02",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/hr-hex-4.html"
         }
       ]
     },
@@ -273,7 +393,7 @@
         {
           "id": "app10",
           "name": "CRM",
-          "description": "Customer relationship management",
+          "description": "Customer relationship management for pipeline tracking, account management, and sales forecasting.",
           "color": "#32CD32",
           "gridPosition": { "q": 10, "r": 3 },
           "showMarker": true,
@@ -282,36 +402,54 @@
             { "to": "app12", "type": "integration", "strength": "high" },
             { "to": "app22", "type": "api", "strength": "medium" }
           ],
-          "status": 4
+          "status": 4,
+          "version": "23.1.0",
+          "owner": "Jessica Martinez",
+          "techStack": ["Salesforce", "Apex", "Lightning"],
+          "uptime": 99.9,
+          "lastDeployment": "2025-03-17",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app10.html"
         },
         {
           "id": "app11",
           "name": "Quote System",
-          "description": "Sales quote generation",
+          "description": "Sales quote generation with pricing rules, discount approvals, and document templating.",
           "color": "#32CD32",
           "gridPosition": { "q": 9, "r": -3 },
           "showMarker": false,
           "connections": [
             { "to": "app12", "type": "data-flow", "strength": "high" }
           ],
-          "status": 70
+          "status": 70,
+          "version": "2.4.0",
+          "owner": "Tom Richards",
+          "techStack": ["Salesforce CPQ", "Apex", "Heroku"],
+          "uptime": 99.1,
+          "lastDeployment": "2025-03-05",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app11.html"
         },
         {
           "id": "app12",
           "name": "Contract Management",
-          "description": "Customer contract system",
+          "description": "Customer contract system for lifecycle tracking, e-signatures, and renewal management.",
           "color": "#32CD32",
           "gridPosition": { "q": 10, "r": -3 },
           "showMarker": false,
           "connections": [
             { "to": "app13", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 19
+          "status": 19,
+          "version": "3.7.2",
+          "owner": "Jessica Martinez",
+          "techStack": ["DocuSign CLM", "Node.js", "DynamoDB"],
+          "uptime": 97.4,
+          "lastDeployment": "2025-01-28",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app12.html"
         },
         {
           "id": "app13",
           "name": "Sales Analytics",
-          "description": "Performance tracking",
+          "description": "Performance tracking dashboards with win/loss analysis and pipeline velocity metrics.",
           "color": "#32CD32",
           "gridPosition": { "q": 7, "r": -6 },
           "showMarker": false,
@@ -319,67 +457,109 @@
             { "to": "app14", "type": "data-flow", "strength": "medium" },
             { "to": "app28", "type": "integration", "strength": "high" }
           ],
-          "status": 85
+          "status": 85,
+          "version": "4.1.0",
+          "owner": "Tom Richards",
+          "techStack": ["Tableau", "Python", "Redshift"],
+          "uptime": 99.3,
+          "lastDeployment": "2025-03-12",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app13.html"
         },
         {
           "id": "app14",
           "name": "Territory Planning",
-          "description": "Sales territory management",
+          "description": "Sales territory management with geographic assignment and quota allocation.",
           "color": "#32CD32",
           "gridPosition": { "q": 11, "r": -3 },
           "showMarker": false,
           "connections": [],
-          "status": 53
+          "status": 53,
+          "version": "1.3.1",
+          "owner": "Jessica Martinez",
+          "techStack": ["Anaplan", "React", "Node.js"],
+          "uptime": 98.2,
+          "lastDeployment": "2025-02-15",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app14.html"
         },
         {
           "id": "sales-hex-1",
           "name": "Opportunity Tracker",
-          "description": "Deal pipeline management",
+          "description": "Deal pipeline management with stage tracking and probability forecasting.",
           "color": "#32CD32",
           "gridPosition": { "q": 13, "r": -2 },
           "showMarker": false,
           "connections": [],
-          "status": 92
+          "status": 92,
+          "version": "2.0.0",
+          "owner": "Tom Richards",
+          "techStack": ["Salesforce", "LWC", "Apex"],
+          "uptime": 99.6,
+          "lastDeployment": "2025-03-16",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/sales-hex-1.html"
         },
         {
           "id": "sales-hex-2",
           "name": "Product Catalog",
-          "description": "Sales offerings database",
+          "description": "Sales offerings database with pricing tiers, SKUs, and product bundles.",
           "color": "#32CD32",
           "gridPosition": { "q": 10, "r": -2 },
           "showMarker": false,
           "connections": [],
-          "status": 29
+          "status": 29,
+          "version": "1.8.5",
+          "owner": "Jessica Martinez",
+          "techStack": ["Custom", "Go", "PostgreSQL"],
+          "uptime": 97.8,
+          "lastDeployment": "2025-01-20",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/sales-hex-2.html"
         },
         {
           "id": "sales-hex-3",
           "name": "Commission Calculator",
-          "description": "Sales commission system",
+          "description": "Sales commission system with tiered payout rules and spiff tracking.",
           "color": "#32CD32",
           "gridPosition": { "q": 11, "r": -2 },
           "showMarker": false,
           "connections": [],
-          "status": 74
+          "status": 74,
+          "version": "2.2.0",
+          "owner": "Tom Richards",
+          "techStack": ["Xactly", "Java", "Oracle DB"],
+          "uptime": 99.0,
+          "lastDeployment": "2025-03-01",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/sales-hex-3.html"
         },
         {
           "id": "sales-hex-4",
           "name": "Lead Management",
-          "description": "Lead qualification platform",
+          "description": "Lead qualification platform with scoring models and routing rules.",
           "color": "#32CD32",
           "gridPosition": { "q": 12, "r": -2 },
           "showMarker": false,
           "connections": [],
-          "status": 15
+          "status": 15,
+          "version": "1.6.3",
+          "owner": "Jessica Martinez",
+          "techStack": ["Marketo", "React", "Redis"],
+          "uptime": 96.9,
+          "lastDeployment": "2025-01-05",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/sales-hex-4.html"
         },
         {
           "id": "sales-hex-5",
           "name": "Customer Portal",
-          "description": "Client access portal",
+          "description": "Client access portal for order status, support tickets, and account management.",
           "color": "#32CD32",
           "gridPosition": { "q": 12, "r": -3 },
           "showMarker": false,
           "connections": [],
-          "status": 80
+          "status": 80,
+          "version": "3.5.1",
+          "owner": "Tom Richards",
+          "techStack": ["Salesforce Community", "LWC", "Heroku"],
+          "uptime": 99.2,
+          "lastDeployment": "2025-03-10",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/sales-hex-5.html"
         }
       ]
     },
@@ -400,43 +580,61 @@
         {
           "id": "app15",
           "name": "Service Desk",
-          "description": "IT support ticketing",
+          "description": "IT support ticketing with SLA tracking, knowledge articles, and self-service portal.",
           "color": "#9932CC",
           "gridPosition": { "q": -5, "r": 4 },
           "showMarker": false,
           "connections": [
             { "to": "app16", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 42
+          "status": 42,
+          "version": "8.2.0",
+          "owner": "David Wilson",
+          "techStack": ["ServiceNow", "JavaScript", "MariaDB"],
+          "uptime": 99.5,
+          "lastDeployment": "2025-03-18",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app15.html"
         },
         {
           "id": "app16",
           "name": "Asset Management",
-          "description": "Hardware/software tracking",
+          "description": "Hardware/software tracking with lifecycle management, license compliance, and depreciation.",
           "color": "#9932CC",
           "gridPosition": { "q": -4, "r": 4 },
           "showMarker": false,
           "connections": [
             { "to": "app17", "type": "integration", "strength": "low" }
           ],
-          "status": 99
+          "status": 99,
+          "version": "4.5.1",
+          "owner": "Karen White",
+          "techStack": ["ServiceNow", "React", "CMDB"],
+          "uptime": 99.7,
+          "lastDeployment": "2025-03-19",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app16.html"
         },
         {
           "id": "app17",
           "name": "Network Monitoring",
-          "description": "Infrastructure monitoring",
+          "description": "Infrastructure monitoring for network devices, bandwidth, and alert correlation.",
           "color": "#9932CC",
           "gridPosition": { "q": -5, "r": 7 },
           "showMarker": false,
           "connections": [
             { "to": "app20", "type": "data-flow", "strength": "high" }
           ],
-          "status": 2
+          "status": 2,
+          "version": "6.0.3",
+          "owner": "David Wilson",
+          "techStack": ["Datadog", "Python", "InfluxDB"],
+          "uptime": 94.3,
+          "lastDeployment": "2024-11-30",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app17.html"
         },
         {
           "id": "app18",
           "name": "CI/CD Platform",
-          "description": "Continuous integration",
+          "description": "Continuous integration and deployment pipelines with automated testing and artifact management.",
           "color": "#9932CC",
           "gridPosition": { "q": -3, "r": 4 },
           "showMarker": false,
@@ -444,109 +642,175 @@
             { "to": "app19", "type": "integration", "strength": "high" },
             { "to": "app20", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 60
+          "status": 60,
+          "version": "12.4.0",
+          "owner": "Karen White",
+          "techStack": ["GitLab CI", "Docker", "Kubernetes"],
+          "uptime": 99.1,
+          "lastDeployment": "2025-03-15",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app18.html"
         },
         {
           "id": "app19",
           "name": "Cloud Management",
-          "description": "Cloud resource management",
+          "description": "Cloud resource management for provisioning, cost optimization, and multi-cloud governance.",
           "color": "#9932CC",
           "gridPosition": { "q": -2, "r": 4 },
           "showMarker": false,
           "connections": [
             { "to": "app20", "type": "integration", "strength": "high" }
           ],
-          "status": 37
+          "status": 37,
+          "version": "3.9.0",
+          "owner": "David Wilson",
+          "techStack": ["Terraform", "AWS", "Go"],
+          "uptime": 98.0,
+          "lastDeployment": "2025-02-22",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app19.html"
         },
         {
           "id": "app20",
           "name": "Security",
-          "description": "Security monitoring tools",
+          "description": "Security monitoring tools for threat detection, vulnerability scanning, and incident response.",
           "color": "#9932CC",
           "gridPosition": { "q": -2, "r": 6 },
           "showMarker": false,
           "connections": [],
-          "status": 87
+          "status": 87,
+          "version": "7.1.2",
+          "owner": "Karen White",
+          "techStack": ["Splunk", "CrowdStrike", "Python"],
+          "uptime": 99.9,
+          "lastDeployment": "2025-03-20",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app20.html"
         },
         {
           "id": "it-hex-1",
           "name": "Identity Management",
-          "description": "Access control system",
+          "description": "Access control system with SSO, MFA, and role-based permissions.",
           "color": "#9932CC",
           "gridPosition": { "q": -6, "r": 4 },
           "showMarker": false,
           "connections": [],
-          "status": 55
+          "status": 55,
+          "version": "5.2.0",
+          "owner": "David Wilson",
+          "techStack": ["Okta", "SAML", "SCIM"],
+          "uptime": 99.8,
+          "lastDeployment": "2025-03-10",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-1.html"
         },
         {
           "id": "it-hex-2",
           "name": "Data Center Management",
-          "description": "Server infrastructure",
+          "description": "Server infrastructure management for on-premise racks, power, and cooling.",
           "color": "#9932CC",
           "gridPosition": { "q": -4, "r": 5 },
           "showMarker": false,
           "connections": [],
-          "status": 24
+          "status": 24,
+          "version": "2.1.4",
+          "owner": "Karen White",
+          "techStack": ["DCIM", "Python", "Grafana"],
+          "uptime": 97.0,
+          "lastDeployment": "2025-01-15",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-2.html"
         },
         {
           "id": "it-hex-3",
           "name": "Database Administration",
-          "description": "Database monitoring",
+          "description": "Database monitoring with performance tuning, backup verification, and capacity planning.",
           "color": "#9932CC",
           "gridPosition": { "q": -5, "r": 5 },
           "showMarker": false,
           "connections": [],
-          "status": 93
+          "status": 93,
+          "version": "4.0.1",
+          "owner": "David Wilson",
+          "techStack": ["OEM", "Oracle", "Percona"],
+          "uptime": 99.6,
+          "lastDeployment": "2025-03-14",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-3.html"
         },
         {
           "id": "it-hex-4",
           "name": "Application Control",
-          "description": "App ecosystem management",
+          "description": "App ecosystem management for approved software, whitelisting, and shadow IT discovery.",
           "color": "#9932CC",
           "gridPosition": { "q": -6, "r": 5 },
           "showMarker": false,
           "connections": [],
-          "status": 69
+          "status": 69,
+          "version": "1.9.0",
+          "owner": "Karen White",
+          "techStack": ["Zylo", "React", "Node.js"],
+          "uptime": 98.4,
+          "lastDeployment": "2025-02-28",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-4.html"
         },
         {
           "id": "it-hex-5",
           "name": "API Gateway",
-          "description": "API management platform",
+          "description": "API management platform for rate limiting, authentication, and developer portal.",
           "color": "#9932CC",
           "gridPosition": { "q": -3, "r": 5 },
           "showMarker": false,
           "connections": [],
-          "status": 11
+          "status": 11,
+          "version": "3.3.0",
+          "owner": "David Wilson",
+          "techStack": ["Kong", "Lua", "Cassandra"],
+          "uptime": 96.1,
+          "lastDeployment": "2024-12-10",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-5.html"
         },
         {
           "id": "it-hex-6",
           "name": "IT Compliance",
-          "description": "Regulatory compliance",
+          "description": "Regulatory compliance tracking for SOC2, ISO 27001, and HIPAA requirements.",
           "color": "#9932CC",
           "gridPosition": { "q": -4, "r": 6 },
           "showMarker": false,
           "connections": [],
-          "status": 78
+          "status": 78,
+          "version": "2.7.1",
+          "owner": "Karen White",
+          "techStack": ["Vanta", "React", "PostgreSQL"],
+          "uptime": 99.2,
+          "lastDeployment": "2025-03-05",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-6.html"
         },
         {
           "id": "it-hex-7",
           "name": "Disaster Recovery",
-          "description": "Backup and recovery system",
+          "description": "Backup and recovery system with RTO/RPO management and failover testing.",
           "color": "#9932CC",
           "gridPosition": { "q": -5, "r": 6 },
           "showMarker": false,
           "connections": [],
-          "status": 48
+          "status": 48,
+          "version": "3.1.2",
+          "owner": "David Wilson",
+          "techStack": ["Zerto", "Veeam", "Azure"],
+          "uptime": 98.6,
+          "lastDeployment": "2025-02-10",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-7.html"
         },
         {
           "id": "it-hex-8",
           "name": "Change Management",
-          "description": "IT change control system",
+          "description": "IT change control system with CAB approvals, impact analysis, and rollback plans.",
           "color": "#9932CC",
           "gridPosition": { "q": -3, "r": 6 },
           "showMarker": false,
           "connections": [],
-          "status": 82
+          "status": 82,
+          "version": "5.0.0",
+          "owner": "Karen White",
+          "techStack": ["ServiceNow", "JavaScript", "MariaDB"],
+          "uptime": 99.4,
+          "lastDeployment": "2025-03-12",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/it-hex-8.html"
         }
       ]
     },
@@ -567,19 +831,25 @@
         {
           "id": "app21",
           "name": "Content Management",
-          "description": "Web content system",
+          "description": "Web content system for publishing, versioning, and multi-channel content delivery.",
           "color": "#FF8C00",
           "gridPosition": { "q": 5, "r": 6 },
           "showMarker": false,
           "connections": [
             { "to": "app23", "type": "integration", "strength": "medium" }
           ],
-          "status": 5
+          "status": 5,
+          "version": "9.1.0",
+          "owner": "Amanda Rodriguez",
+          "techStack": ["WordPress VIP", "PHP", "MySQL"],
+          "uptime": 96.0,
+          "lastDeployment": "2024-12-15",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app21.html"
         },
         {
           "id": "app22",
           "name": "Marketing Automation",
-          "description": "Campaign management",
+          "description": "Campaign management with email workflows, lead nurturing, and A/B testing.",
           "color": "#FF8C00",
           "gridPosition": { "q": 5, "r": 7 },
           "showMarker": false,
@@ -588,81 +858,129 @@
             { "to": "app24", "type": "data-flow", "strength": "high" },
             { "to": "app10", "type": "api", "strength": "medium" }
           ],
-          "status": 71
+          "status": 71,
+          "version": "6.3.2",
+          "owner": "Nina Brooks",
+          "techStack": ["HubSpot", "Node.js", "MongoDB"],
+          "uptime": 99.4,
+          "lastDeployment": "2025-03-13",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app22.html"
         },
         {
           "id": "app23",
           "name": "Social Media",
-          "description": "Social media management",
+          "description": "Social media management for scheduling, engagement, and sentiment analysis.",
           "color": "#FF8C00",
           "gridPosition": { "q": 6, "r": 7 },
           "showMarker": false,
           "connections": [
             { "to": "app24", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 30
+          "status": 30,
+          "version": "4.2.0",
+          "owner": "Amanda Rodriguez",
+          "techStack": ["Sprout Social", "React", "PostgreSQL"],
+          "uptime": 97.7,
+          "lastDeployment": "2025-02-08",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app23.html"
         },
         {
           "id": "app24",
           "name": "Analytics",
-          "description": "Marketing performance tracking",
+          "description": "Marketing performance tracking with attribution modeling and ROI analysis.",
           "color": "#FF8C00",
           "gridPosition": { "q": 7, "r": 7 },
           "showMarker": false,
           "connections": [
             { "to": "app28", "type": "integration", "strength": "medium" }
           ],
-          "status": 86
+          "status": 86,
+          "version": "5.0.1",
+          "owner": "Nina Brooks",
+          "techStack": ["Google Analytics", "BigQuery", "Looker"],
+          "uptime": 99.5,
+          "lastDeployment": "2025-03-14",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app24.html"
         },
         {
           "id": "marketing-hex-1",
           "name": "Digital Asset Manager",
-          "description": "Media asset repository",
+          "description": "Media asset repository for images, videos, and brand collateral.",
           "color": "#FF8C00",
           "gridPosition": { "q": 4, "r": 6 },
           "showMarker": false,
           "connections": [],
-          "status": 54
+          "status": 54,
+          "version": "2.6.0",
+          "owner": "Amanda Rodriguez",
+          "techStack": ["Bynder", "React", "S3"],
+          "uptime": 98.9,
+          "lastDeployment": "2025-02-20",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/marketing-hex-1.html"
         },
         {
           "id": "marketing-hex-2",
           "name": "Email Platform",
-          "description": "Email marketing system",
+          "description": "Email marketing system for transactional and campaign emails with deliverability tracking.",
           "color": "#FF8C00",
           "gridPosition": { "q": 4, "r": 7 },
           "showMarker": false,
           "connections": [],
-          "status": 96
+          "status": 96,
+          "version": "7.0.0",
+          "owner": "Nina Brooks",
+          "techStack": ["SendGrid", "Python", "Redis"],
+          "uptime": 99.8,
+          "lastDeployment": "2025-03-18",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/marketing-hex-2.html"
         },
         {
           "id": "marketing-hex-3",
           "name": "Brand Portal",
-          "description": "Brand guidelines system",
+          "description": "Brand guidelines system with template management and asset distribution.",
           "color": "#FF8C00",
           "gridPosition": { "q": 5, "r": 8 },
           "showMarker": false,
           "connections": [],
-          "status": 20
+          "status": 20,
+          "version": "1.3.0",
+          "owner": "Amanda Rodriguez",
+          "techStack": ["Frontify", "Vue.js", "PostgreSQL"],
+          "uptime": 97.3,
+          "lastDeployment": "2025-01-25",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/marketing-hex-3.html"
         },
         {
           "id": "marketing-hex-4",
           "name": "Event Management",
-          "description": "Event planning platform",
+          "description": "Event planning platform for virtual/hybrid events, registration, and attendee tracking.",
           "color": "#FF8C00",
           "gridPosition": { "q": 7, "r": 6 },
           "showMarker": false,
           "connections": [],
-          "status": 75
+          "status": 75,
+          "version": "3.4.1",
+          "owner": "Nina Brooks",
+          "techStack": ["Cvent", "Angular", "SQL Server"],
+          "uptime": 98.7,
+          "lastDeployment": "2025-03-03",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/marketing-hex-4.html"
         },
         {
           "id": "marketing-hex-5",
           "name": "SEO Tools",
-          "description": "Search optimization",
+          "description": "Search optimization with keyword tracking, site audits, and competitor analysis.",
           "color": "#FF8C00",
           "gridPosition": { "q": 6, "r": 6 },
           "showMarker": false,
           "connections": [],
-          "status": 10
+          "status": 10,
+          "version": "2.8.0",
+          "owner": "Amanda Rodriguez",
+          "techStack": ["SEMrush", "Python", "Elasticsearch"],
+          "uptime": 96.4,
+          "lastDeployment": "2024-12-28",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/marketing-hex-5.html"
         }
       ]
     },
@@ -683,66 +1001,102 @@
         {
           "id": "app25",
           "name": "AI Research",
-          "description": "Cutting-edge AI development",
+          "description": "Cutting-edge AI development platform for model training, evaluation, and deployment.",
           "color": "#1E90FF",
           "gridPosition": { "q": -9, "r": 0 },
           "showMarker": false,
           "connections": [
             { "to": "app26", "type": "data-flow", "strength": "high" }
           ],
-          "status": 84
+          "status": 84,
+          "version": "0.9.1",
+          "owner": "Raj Patel",
+          "techStack": ["PyTorch", "CUDA", "MLflow"],
+          "uptime": 95.0,
+          "lastDeployment": "2025-03-19",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app25.html"
         },
         {
           "id": "app26",
           "name": "Quantum Computing",
-          "description": "Quantum research platform",
+          "description": "Quantum research platform for algorithm development and quantum simulation.",
           "color": "#1E90FF",
           "gridPosition": { "q": -9, "r": -6 },
           "showMarker": false,
           "connections": [
             { "to": "app27", "type": "integration", "strength": "low" }
           ],
-          "status": 58
+          "status": 58,
+          "version": "0.4.0",
+          "owner": "Raj Patel",
+          "techStack": ["Qiskit", "Python", "IBM Quantum"],
+          "uptime": 89.5,
+          "lastDeployment": "2025-02-14",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app26.html"
         },
         {
           "id": "app27",
           "name": "Blockchain Innovation",
-          "description": "Distributed ledger technologies",
+          "description": "Distributed ledger technologies for supply chain provenance and smart contracts.",
           "color": "#1E90FF",
           "gridPosition": { "q": -10, "r": -6 },
           "showMarker": false,
           "connections": [],
-          "status": 23
+          "status": 23,
+          "version": "0.6.2",
+          "owner": "Raj Patel",
+          "techStack": ["Ethereum", "Solidity", "IPFS"],
+          "uptime": 92.1,
+          "lastDeployment": "2025-01-08",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app27.html"
         },
         {
           "id": "app31",
           "name": "Collision Test",
-          "description": "App to test collision detection",
+          "description": "App to test collision detection and overlap handling in the hex grid.",
           "color": "#1E90FF",
           "gridPosition": { "q": -9, "r": -0 },
           "showMarker": false,
           "connections": [],
-          "status": 90
+          "status": 90,
+          "version": "0.1.0",
+          "owner": "Raj Patel",
+          "techStack": ["React", "D3.js", "Jest"],
+          "uptime": 100.0,
+          "lastDeployment": "2025-03-01",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app31.html"
         },
         {
           "id": "emerging-hex-1",
           "name": "AR/VR Lab",
-          "description": "Augmented reality research",
+          "description": "Augmented reality research for field service, training simulations, and product visualization.",
           "color": "#1E90FF",
           "gridPosition": { "q": -11, "r": -6 },
           "showMarker": false,
           "connections": [],
-          "status": 67
+          "status": 67,
+          "version": "0.7.0",
+          "owner": "Raj Patel",
+          "techStack": ["Unity", "C#", "ARKit"],
+          "uptime": 93.2,
+          "lastDeployment": "2025-02-18",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/emerging-hex-1.html"
         },
         {
           "id": "emerging-hex-2",
           "name": "IoT Platform",
-          "description": "Internet of Things framework",
+          "description": "Internet of Things framework for device management, telemetry, and edge computing.",
           "color": "#1E90FF",
           "gridPosition": { "q": -11, "r": -5 },
           "showMarker": false,
           "connections": [],
-          "status": 44
+          "status": 44,
+          "version": "1.0.0",
+          "owner": "Raj Patel",
+          "techStack": ["AWS IoT", "MQTT", "TimescaleDB"],
+          "uptime": 96.8,
+          "lastDeployment": "2025-02-05",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/emerging-hex-2.html"
         }
       ]
     },
@@ -763,46 +1117,70 @@
         {
           "id": "app28",
           "name": "Enterprise Analytics",
-          "description": "Cross-department insights",
+          "description": "Cross-department insights platform with executive dashboards and data warehouse.",
           "color": "#8A2BE2",
           "gridPosition": { "q": 2, "r": -8 },
           "showMarker": false,
           "connections": [
             { "to": "app29", "type": "data-flow", "strength": "medium" }
           ],
-          "status": 76
+          "status": 76,
+          "version": "6.2.0",
+          "owner": "Lauren Taylor",
+          "techStack": ["Power BI", "Azure Synapse", "Python"],
+          "uptime": 99.3,
+          "lastDeployment": "2025-03-16",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app28.html"
         },
         {
           "id": "app29",
           "name": "Knowledge Base",
-          "description": "Shared company documentation",
+          "description": "Shared company documentation with wiki, search, and collaborative editing.",
           "color": "#8A2BE2",
           "gridPosition": { "q": -1, "r": -6 },
           "showMarker": false,
           "connections": [
             { "to": "app30", "type": "integration", "strength": "medium" }
           ],
-          "status": 13
+          "status": 13,
+          "version": "4.1.3",
+          "owner": "Lauren Taylor",
+          "techStack": ["Confluence", "Java", "Elasticsearch"],
+          "uptime": 96.7,
+          "lastDeployment": "2025-01-02",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app29.html"
         },
         {
           "id": "app30",
           "name": "Project Management",
-          "description": "Enterprise project tracking",
+          "description": "Enterprise project tracking with Gantt charts, resource allocation, and portfolio views.",
           "color": "#8A2BE2",
           "gridPosition": { "q": 0, "r": -7 },
           "showMarker": false,
           "connections": [],
-          "status": 89
+          "status": 89,
+          "version": "3.6.0",
+          "owner": "Lauren Taylor",
+          "techStack": ["Jira", "Atlassian", "PostgreSQL"],
+          "uptime": 99.6,
+          "lastDeployment": "2025-03-08",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/app30.html"
         },
         {
           "id": "crossfunctional-hex-1",
           "name": "Collaboration Tools",
-          "description": "Cross-team collaboration platform",
+          "description": "Cross-team collaboration platform with chat, video, and document co-authoring.",
           "color": "#8A2BE2",
           "gridPosition": { "q": 1, "r": -7 },
           "showMarker": false,
           "connections": [],
-          "status": 40
+          "status": 40,
+          "version": "8.0.0",
+          "owner": "Lauren Taylor",
+          "techStack": ["Microsoft Teams", "SharePoint", "Azure"],
+          "uptime": 99.9,
+          "lastDeployment": "2025-03-15",
+          "detailUrl": "https://ganizanisitara.github.io/hexmap/details/crossfunctional-hex-1.html"
         }
       ]
     }
