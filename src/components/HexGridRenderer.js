@@ -21,7 +21,8 @@ class HexGridRenderer {
                     tooltipManager,
                     setHoveredCluster,
                     setContextMenu,
-                    colorMode
+                    colorMode,
+                    setSelectedApp
                 }) {
         this.svg = svg;
         this.mainGroup = mainGroup;
@@ -40,6 +41,7 @@ class HexGridRenderer {
         this.setHoveredCluster = setHoveredCluster;
         this.setContextMenu = setContextMenu;
         this.colorMode = colorMode;
+        this.setSelectedApp = setSelectedApp;
 
         // Constants
         this.width = window.innerWidth;
@@ -635,29 +637,55 @@ class HexGridRenderer {
                     this.timeoutIds.current.length = 0;
                 }
             })
+            .on("click", (event) => {
+                const currentZoom = d3.zoomTransform(this.svg.node()).k;
+                if (currentZoom >= 2.2 && coord.app) {
+                    event.stopPropagation();
+                    this.setSelectedApp({
+                        ...coord.app,
+                        clusterName: cluster.name,
+                        clusterColor: cluster.color,
+                        clusterId: cluster.id,
+                    });
+                    this.setContextMenu({ show: false, x: 0, y: 0, items: [] });
+                }
+            })
             .on("contextmenu", (event) => {
                 event.preventDefault();
                 const currentZoom = d3.zoomTransform(this.svg.node()).k;
-                
+
                 // Only show context menu at zoom levels 2.2 and 4
                 if (currentZoom === 2.2 || currentZoom === 4) {
                     // Use clientX/clientY for viewport-relative coordinates
                     this.setContextMenu({
                         show: true,
-                        x: event.clientX, 
+                        x: event.clientX,
                         y: event.clientY,
                         items: [
                             {
-                                label: "Action 1",
-                                action: () => console.log("Action 1 clicked", coord.app || cluster)
+                                label: "View Details",
+                                action: () => {
+                                    if (coord.app) {
+                                        this.setSelectedApp({
+                                            ...coord.app,
+                                            clusterName: cluster.name,
+                                            clusterColor: cluster.color,
+                                            clusterId: cluster.id,
+                                        });
+                                    }
+                                }
                             },
                             {
-                                label: "Action 2", 
-                                action: () => console.log("Action 2 clicked", coord.app || cluster)
+                                label: "Open Detail Page",
+                                action: () => {
+                                    if (coord.app?.detailUrl) {
+                                        window.open(coord.app.detailUrl, '_blank');
+                                    }
+                                }
                             },
                             {
-                                label: "Follow Link",
-                                action: () => window.open(coord.app?.link || '#', '_blank')
+                                label: "Show Connections",
+                                action: () => console.log("Connections for", coord.app?.name, coord.app?.connections)
                             }
                         ]
                     });

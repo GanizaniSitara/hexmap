@@ -22,6 +22,7 @@ import {
     ContextMenu,
     ToggleButton // Import the ToggleButton
 } from './ui/components';
+import NodeDetailPanel from './ui/components/NodeDetailPanel';
 
 const HexMap = () => {
     // State management
@@ -37,7 +38,8 @@ const HexMap = () => {
         y: 0,
         items: []
     });
-    
+    const [selectedApp, setSelectedApp] = useState(null);
+
     // Status toggle state
     const [colorMode, setColorMode] = useState('Cluster');
 
@@ -181,7 +183,8 @@ const HexMap = () => {
             tooltipManager: tooltipManagerRef.current,
             setHoveredCluster,
             setContextMenu,
-            colorMode
+            colorMode,
+            setSelectedApp
         });
 
         // Initialize ClusterManager
@@ -337,6 +340,15 @@ const HexMap = () => {
                     y={contextMenu.y}
                     items={contextMenu.items}
                     onClose={() => setContextMenu({...contextMenu, show: false})}
+                />
+            )}
+
+            {selectedApp && (
+                <NodeDetailPanel
+                    app={selectedApp}
+                    cluster={entityData.clusters.find(c => c.id === selectedApp.clusterId)}
+                    onClose={() => setSelectedApp(null)}
+                    appCoordinatesRef={appCoordinatesRef}
                 />
             )}
         </div>
