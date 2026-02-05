@@ -53,5 +53,9 @@ storybook-static/
 .next/
 out/
 
+# Python
+__pycache__/
+*.pyc
+
 # Ours
 legacy/
