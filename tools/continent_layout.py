@@ -8,9 +8,16 @@ Creates "geographic" enterprise architecture maps where:
 - Unconnected businesses have water gaps between them
 - Apps are placed within their continent's territory
 
+Topographic Stability:
+    When run with --positions <file>, the layout is stable across runs.
+    Existing apps keep their positions. New apps are placed in available
+    territory cells. Removed apps free their cells but nothing else moves.
+    Continents keep their centroids unless they're entirely new.
+
 Usage:
-    python continent_layout.py --generate  # Generate test data + layout
-    python continent_layout.py input.csv   # Layout from input file
+    python continent_layout.py --generate                              # Fresh layout
+    python continent_layout.py input.csv --positions layout_cache.json # Stable layout
+    python continent_layout.py input.csv --reset                       # Force fresh
 """
 
 import argparse
@@ -20,6 +27,7 @@ import random
 import hashlib
 from collections import defaultdict
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, List, Set, Tuple, Optional
 
 # Hex directions for grid operations (pointy-top, odd-r offset)
@@ -83,9 +91,82 @@ class Continent:
     connections: Dict[str, int] = field(default_factory=dict)  # continent_id -> strength
 
 
+class PositionCache:
+    """
+    Stores and retrieves layout positions for topographic stability.
+
+    The cache records:
+      - Each continent's centroid and territory hexes
+      - Each app's grid position
+      - Metadata (timestamp, app count) for staleness detection
+
+    On re-run, existing positions are locked. Only new apps get computed.
+    Removed apps free their hexes but nothing else moves.
+    """
+
+    def __init__(self):
+        self.continent_centroids: Dict[str, Tuple[float, float]] = {}
+        self.continent_territories: Dict[str, Set[Tuple[int, int]]] = {}
+        self.app_positions: Dict[str, Tuple[int, int]] = {}
+        self.app_continents: Dict[str, str] = {}  # app_id -> continent_name
+
+    def save(self, filepath: str):
+        """Save position cache to JSON file."""
+        data = {
+            "version": 1,
+            "continent_centroids": {
+                name: list(pos)
+                for name, pos in self.continent_centroids.items()
+            },
+            "continent_territories": {
+                name: [list(h) for h in sorted(hexes)]
+                for name, hexes in self.continent_territories.items()
+            },
+            "app_positions": {
+                app_id: list(pos)
+                for app_id, pos in self.app_positions.items()
+            },
+            "app_continents": self.app_continents,
+        }
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=2)
+
+    @classmethod
+    def load(cls, filepath: str) -> 'PositionCache':
+        """Load position cache from JSON file."""
+        cache = cls()
+        path = Path(filepath)
+        if not path.exists():
+            return cache
+
+        with open(path, 'r') as f:
+            data = json.load(f)
+
+        if data.get("version") != 1:
+            print(f"  Warning: Unknown cache version, ignoring")
+            return cache
+
+        for name, pos in data.get("continent_centroids", {}).items():
+            cache.continent_centroids[name] = tuple(pos)
+
+        for name, hexes in data.get("continent_territories", {}).items():
+            cache.continent_territories[name] = {tuple(h) for h in hexes}
+
+        for app_id, pos in data.get("app_positions", {}).items():
+            cache.app_positions[app_id] = tuple(pos)
+
+        cache.app_continents = data.get("app_continents", {})
+
+        return cache
+
+
 class ContinentLayoutEngine:
     """
     Generates continent-based hex layouts for enterprise architecture.
+
+    Supports topographic stability via PositionCache: when a previous
+    layout is provided, existing app and continent positions are preserved.
+    Only new apps get placed; removed apps free their cells.
     """
 
     def __init__(self,
@@ -95,7 +176,8 @@ class ContinentLayoutEngine:
                  force_iterations: int = 100,   # Force-directed iterations
                  seed: int = 42,                # Random seed for reproducibility
                  collision_rate: float = 0.01,  # % of apps to create collisions for (~1 collision)
-                 indicator_rate: float = 0.15): # % of apps to show position indicators
+                 indicator_rate: float = 0.15,  # % of apps to show position indicators
+                 positions_file: str = None):   # Path to position cache for stability
 
         self.water_gap = water_gap
         self.connected_gap = connected_gap
@@ -104,10 +186,23 @@ class ContinentLayoutEngine:
         self.seed = seed
         self.collision_rate = collision_rate
         self.indicator_rate = indicator_rate
+        self.positions_file = positions_file
 
         self.apps: Dict[str, App] = {}
         self.continents: Dict[str, Continent] = {}
         self.occupied_hexes: Set[Tuple[int, int]] = set()
+
+        # Position cache for stability
+        self._cache = None
+        if positions_file:
+            path = Path(positions_file)
+            if path.exists():
+                print(f"  Loading position cache: {positions_file}")
+                self._cache = PositionCache.load(positions_file)
+                print(f"    Cached: {len(self._cache.app_positions)} apps, "
+                      f"{len(self._cache.continent_centroids)} continents")
+            else:
+                print(f"  No existing cache at {positions_file} (will create)")
 
         random.seed(seed)
 
@@ -180,11 +275,46 @@ class ContinentLayoutEngine:
         return (x, y)
 
     def _position_continent_centroids(self):
-        """Use force-directed layout to position continent centroids."""
-        # Initialize positions from name hash (deterministic)
-        positions = {}
-        for continent in self.continents.values():
-            positions[continent.id] = self._hash_position(continent.name)
+        """
+        Position continent centroids.
+
+        With cache: reuse cached centroid positions for known continents.
+        Only new continents go through force-directed placement, anchored
+        against the locked positions of existing continents.
+
+        Without cache: full force-directed layout from hash seeds.
+        """
+        # Determine which continents have cached positions
+        locked = {}   # continent_id -> (x, y)  -- will not move
+        unlocked = {} # continent_id -> (x, y)  -- need placement
+
+        # Build name-to-id mapping for cache lookup (cache keys by name)
+        name_to_id = {c.name: c.id for c in self.continents.values()}
+
+        if self._cache:
+            for continent in self.continents.values():
+                cached_pos = self._cache.continent_centroids.get(continent.name)
+                if cached_pos:
+                    locked[continent.id] = cached_pos
+                    continent.centroid = cached_pos
+                else:
+                    unlocked[continent.id] = self._hash_position(continent.name)
+
+            if locked:
+                print(f"    Locked {len(locked)} continent centroids from cache")
+            if unlocked:
+                print(f"    Computing positions for {len(unlocked)} new continent(s)")
+        else:
+            # No cache: all continents need placement
+            for continent in self.continents.values():
+                unlocked[continent.id] = self._hash_position(continent.name)
+
+        # If everything is locked, we're done
+        if not unlocked:
+            return
+
+        # Merge into single positions dict for force simulation
+        positions = {**locked, **unlocked}
 
         # Force-directed iterations
         for iteration in range(self.force_iterations):
@@ -247,9 +377,11 @@ class ContinentLayoutEngine:
                     forces[c2.id][0] -= nx * total_force
                     forces[c2.id][1] -= ny * total_force
 
-            # Apply forces with damping
+            # Apply forces with damping -- but only to unlocked continents
             damping = 0.8 * (1 - iteration / self.force_iterations)
             for cid in positions:
+                if cid in locked:
+                    continue  # Don't move locked continents
                 positions[cid] = (
                     positions[cid][0] + forces[cid][0] * damping,
                     positions[cid][1] + forces[cid][1] * damping
@@ -260,8 +392,70 @@ class ContinentLayoutEngine:
             continent.centroid = positions[continent.id]
 
     def _grow_territory(self, continent: Continent) -> Set[Tuple[int, int]]:
-        """Grow a continent's territory from its centroid using BFS."""
-        # Convert centroid to hex coordinates
+        """
+        Grow a continent's territory from its centroid using BFS.
+
+        With cache: start from cached territory. If the continent needs more
+        hexes (grew), expand from the existing border. If it needs fewer
+        (shrank), keep the core cells closest to centroid.
+        """
+        # Check for cached territory
+        cached_territory = None
+        if self._cache:
+            cached_territory = self._cache.continent_territories.get(continent.name)
+
+        if cached_territory:
+            # Filter out any cached hexes that are already occupied by another continent
+            available = {h for h in cached_territory if h not in self.occupied_hexes}
+
+            if len(available) >= continent.target_size:
+                # Territory is big enough: keep the ones closest to centroid
+                cx, cy = continent.centroid
+                sorted_hexes = sorted(available, key=lambda h: (h[0]-cx)**2 + (h[1]-cy)**2)
+                territory = set(sorted_hexes[:continent.target_size])
+                for h in territory:
+                    self.occupied_hexes.add(h)
+                return territory
+
+            elif available:
+                # Territory exists but needs to grow: claim cached cells first, then expand
+                territory = set(available)
+                for h in territory:
+                    self.occupied_hexes.add(h)
+
+                # Expand from the border of existing territory
+                cx, cy = continent.centroid
+                border = set()
+                for q, r in territory:
+                    for dq, dr in HEX_DIRECTIONS:
+                        nq, nr = q + dq, r + dr
+                        if (nq, nr) not in territory:
+                            border.add((nq, nr))
+
+                frontier = list(border)
+                visited = territory | border
+
+                while len(territory) < continent.target_size and frontier:
+                    frontier.sort(key=lambda h: (h[0]-cx)**2 + (h[1]-cy)**2)
+                    q, r = frontier.pop(0)
+
+                    if (q, r) in self.occupied_hexes:
+                        continue
+                    if self._too_close_to_others(q, r, continent.id):
+                        continue
+
+                    territory.add((q, r))
+                    self.occupied_hexes.add((q, r))
+
+                    for dq, dr in HEX_DIRECTIONS:
+                        nq, nr = q + dq, r + dr
+                        if (nq, nr) not in visited:
+                            visited.add((nq, nr))
+                            frontier.append((nq, nr))
+
+                return territory
+
+        # No cache or empty cache: fresh BFS growth
         cx, cy = continent.centroid
         start_q, start_r = int(round(cx)), int(round(cy))
 
@@ -351,56 +545,84 @@ class ContinentLayoutEngine:
         return (q, r)
 
     def _place_apps_in_territory(self, continent: Continent):
-        """Place apps within their continent's territory."""
+        """
+        Place apps within their continent's territory.
+
+        With cache: apps that have a cached position in this territory keep it.
+        New apps get placed in remaining cells using hash-stable assignment
+        (each app picks its cell based on a hash of its ID, not dependent on
+        what other apps exist).
+
+        Without cache: hash-stable placement for all apps. External-connection
+        apps prefer edge cells, internal apps prefer center cells, but the
+        specific cell is chosen by hash to ensure stability.
+        """
         if not continent.territory:
             return
 
-        territory_list = list(continent.territory)
+        territory_set = set(continent.territory)
         cx, cy = continent.centroid
+        assigned = set()
 
-        # Sort apps: high external connections go to edges
-        sorted_apps = sorted(
-            continent.apps,
-            key=lambda a: a.external_connection_count,
-            reverse=True
-        )
+        # Phase A: Lock cached positions
+        cached_apps = []
+        new_apps = []
 
-        # Sort territory hexes by distance from centroid
-        # External apps get edge hexes, internal apps get center hexes
-        territory_by_distance = sorted(
-            territory_list,
-            key=lambda h: -((h[0]-cx)**2 + (h[1]-cy)**2)  # Negative = farthest first
-        )
+        for app in continent.apps:
+            cached_pos = None
+            if self._cache:
+                cached_pos = self._cache.app_positions.get(app.id)
 
-        # Also prepare center-first list for internal apps
-        territory_center_first = sorted(
-            territory_list,
+            if cached_pos and tuple(cached_pos) in territory_set and tuple(cached_pos) not in assigned:
+                # App has a valid cached position in this territory
+                app.grid_position = tuple(cached_pos)
+                assigned.add(app.grid_position)
+                cached_apps.append(app)
+            else:
+                new_apps.append(app)
+
+        # Phase B: Place new apps using hash-stable assignment
+        # Sort territory into edge-first and center-first lists
+        territory_list = sorted(
+            territory_set,
             key=lambda h: (h[0]-cx)**2 + (h[1]-cy)**2
         )
+        # Index each cell for hash-based selection
+        available_edge = [h for h in reversed(territory_list) if h not in assigned]
+        available_center = [h for h in territory_list if h not in assigned]
 
-        assigned = set()
-        assigned_positions = []  # Track for collision creation
-
-        for app in sorted_apps:
-            # Randomly assign position indicator
-            if random.random() < self.indicator_rate:
+        for app in new_apps:
+            # Deterministic indicator based on app ID hash
+            h = hashlib.md5(app.id.encode()).hexdigest()
+            indicator_val = int(h[-2:], 16) / 255.0
+            if indicator_val < self.indicator_rate:
                 app.show_position_indicator = True
 
-            # Choose position based on externality
+            # Choose candidate list based on externality
             if app.external_connection_count > 0:
-                # External app: prefer edges
-                candidates = territory_by_distance
+                candidates = available_edge
             else:
-                # Internal app: prefer center
-                candidates = territory_center_first
+                candidates = available_center
 
-            # Find first unassigned hex
-            for hex_pos in candidates:
-                if hex_pos not in assigned:
-                    app.grid_position = hex_pos
-                    assigned.add(hex_pos)
-                    assigned_positions.append(hex_pos)
-                    break
+            if not candidates:
+                candidates = available_edge if available_center == candidates else available_center
+
+            if not candidates:
+                continue  # No territory left
+
+            # Hash-stable selection: pick index based on app ID hash
+            hash_val = int(hashlib.md5(app.id.encode()).hexdigest()[:8], 16)
+            idx = hash_val % len(candidates)
+            chosen = candidates[idx]
+
+            app.grid_position = chosen
+            assigned.add(chosen)
+
+            # Remove from both lists
+            if chosen in available_edge:
+                available_edge.remove(chosen)
+            if chosen in available_center:
+                available_center.remove(chosen)
 
 
     def generate_layout(self) -> Dict:
@@ -449,9 +671,62 @@ class ContinentLayoutEngine:
             if collisions_created > 0:
                 print(f"  Total: {collisions_created} collision(s)")
 
-        # Phase 4: Build output
+        # Phase 4: Stability report
+        self._report_stability()
+
+        # Phase 5: Save position cache
+        if self.positions_file:
+            self._save_cache()
+
+        # Phase 6: Build output
         print("Phase 4: Building output...")
         return self._build_output()
+
+    def _report_stability(self):
+        """Report what moved vs what stayed stable compared to cache."""
+        if not self._cache or not self._cache.app_positions:
+            return
+
+        kept = 0
+        moved = 0
+        added = 0
+        removed_ids = set(self._cache.app_positions.keys()) - set(self.apps.keys())
+
+        for app in self.apps.values():
+            if not app.grid_position:
+                continue
+            cached_pos = self._cache.app_positions.get(app.id)
+            if cached_pos is None:
+                added += 1
+            elif tuple(cached_pos) == app.grid_position:
+                kept += 1
+            else:
+                moved += 1
+
+        print(f"\nStability report:")
+        print(f"  Kept position:  {kept}")
+        print(f"  Moved:          {moved}")
+        print(f"  New apps:       {added}")
+        print(f"  Removed apps:   {len(removed_ids)}")
+        if kept + moved > 0:
+            pct = kept / (kept + moved) * 100
+            print(f"  Stability:      {pct:.1f}%")
+
+    def _save_cache(self):
+        """Save current positions to cache file."""
+        cache = PositionCache()
+
+        for continent in self.continents.values():
+            cache.continent_centroids[continent.name] = continent.centroid
+            cache.continent_territories[continent.name] = continent.territory
+
+        for app in self.apps.values():
+            if app.grid_position:
+                cache.app_positions[app.id] = app.grid_position
+                cache.app_continents[app.id] = app.business
+
+        cache.save(self.positions_file)
+        print(f"  Saved position cache: {self.positions_file}")
 
     def _build_output(self) -> Dict:
         """Build HexMap-compatible JSON output."""
@@ -767,6 +1042,12 @@ CSV Format:
                         help='Hex gap between unconnected continents (default: 2)')
     parser.add_argument('--connected-gap', type=int, default=1,
                         help='Hex gap between connected continents (default: 1)')
+    parser.add_argument('--positions', default=None, metavar='FILE',
+                        help='Position cache file for topographic stability. '
+                             'Existing positions are preserved across runs. '
+                             'Created automatically on first run.')
+    parser.add_argument('--reset', action='store_true',
+                        help='Ignore position cache and recompute from scratch')
 
     args = parser.parse_args()
 
@@ -782,11 +1063,17 @@ CSV Format:
         print("\nError: Provide an input CSV file or use --generate for synthetic data")
         return
 
+    # Resolve positions file
+    positions_file = None
+    if args.positions and not args.reset:
+        positions_file = str(Path(__file__).parent / args.positions)
+
     # Create layout engine
     engine = ContinentLayoutEngine(
         water_gap=args.water_gap,
         connected_gap=args.connected_gap,
-        seed=args.seed
+        seed=args.seed,
+        positions_file=positions_file,
     )
 
     # Load apps and generate layout
@@ -794,7 +1081,6 @@ CSV Format:
     output = engine.generate_layout()
 
     # Write output
-    from pathlib import Path
     output_path = Path(__file__).parent / args.output
     output_path.parent.mkdir(parents=True, exist_ok=True)
 

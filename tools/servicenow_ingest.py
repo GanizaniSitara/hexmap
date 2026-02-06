@@ -813,6 +813,10 @@ Classification override CSV:
                         help='Hex gap between unconnected continents (default: 2)')
     parser.add_argument('--connected-gap', type=int, default=1,
                         help='Hex gap between connected continents (default: 1)')
+    parser.add_argument('--positions', default=None, metavar='FILE',
+                        help='Position cache file for topographic stability')
+    parser.add_argument('--reset', action='store_true',
+                        help='Ignore position cache and recompute from scratch')
 
     args = parser.parse_args()
 
@@ -860,6 +864,11 @@ Classification override CSV:
         print("Try --map-type all to include everything.")
         return
 
+    # Resolve positions file
+    positions_file = None
+    if args.positions and not args.reset:
+        positions_file = str(Path(args.positions))
+
     # Run layout engine
     print(f"\nRunning continent layout engine...")
     engine = ContinentLayoutEngine(
@@ -868,6 +877,7 @@ Classification override CSV:
         seed=args.seed,
         collision_rate=0,  # No artificial collisions for real data
         indicator_rate=0.1,
+        positions_file=positions_file,
     )
     engine.load_apps(layout_apps)
     output = engine.generate_layout()
