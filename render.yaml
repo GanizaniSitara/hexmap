@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: hexmap
+    runtime: static
+    branch: develop
+    buildCommand: npm install && npm run build:render
+    staticPublishPath: ./build
+    pullRequestPreviewsEnabled: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
