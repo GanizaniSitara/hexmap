@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as d3 from 'd3';
 import entityData from './data.json'; // Ensure entityData includes pillboxTooltip
 import { getHexagonFillColor } from './utils/colorUtils';
+import colorScheme from './colorScheme';
 
 // Component imports
 import HexGridRenderer from './components/HexGridRenderer';
@@ -313,15 +314,15 @@ const HexMap = () => {
                         <div className="font-semibold mb-2 text-sm">Status Legend</div>
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: '#008000'}}></div>
+                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: colorScheme.statusColors.high}}></div>
                                 <span className="text-xs">High (66-100)</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: '#FFA500'}}></div>
+                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: colorScheme.statusColors.medium}}></div>
                                 <span className="text-xs">Medium (33-65)</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: '#FF0000'}}></div>
+                                <div className="w-4 h-4 rounded-sm" style={{backgroundColor: colorScheme.statusColors.low}}></div>
                                 <span className="text-xs">Low (0-32)</span>
                             </div>
                         </div>

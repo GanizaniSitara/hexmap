@@ -1,6 +1,7 @@
 import React from 'react';
 import * as d3 from 'd3';
 import { getTypeColor } from '../connectionUtils';
+import { getClusterColor } from '../utils/colorUtils';
 import ClusterInfoPanel from './components/ClusterInfoPanel';
 import ContextMenu from './components/ContextMenu';
 
@@ -423,7 +424,7 @@ export const ClusterLegend = ({ entityData, selectedCluster, setSelectedCluster,
                         <div style={{
                             width: '12px',
                             height: '12px',
-                            backgroundColor: cluster.color,
+                            backgroundColor: getClusterColor(cluster),
                             marginRight: '8px',
                             borderRadius: '3px',
                             border: '1px solid rgba(255,255,255,0.5)'
