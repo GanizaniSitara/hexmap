@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import HexGrid from '../HexGrid';
 import { getLighterColor } from '../connectionUtils';
-import { getHexagonFillColor } from '../utils/colorUtils';
+import { getClusterColor, getHexagonFillColor } from '../utils/colorUtils';
 
 class HexGridRenderer {
     constructor({
@@ -278,7 +278,7 @@ class HexGridRenderer {
                 app.clusterId = cluster.id;
                 app.clusterName = cluster.name;
                 // Add cluster color to app for connection rendering
-                app.color = cluster.color;
+                app.color = getClusterColor(cluster);
             });
         });
 
@@ -482,7 +482,7 @@ class HexGridRenderer {
                     // Store cluster information with the app
                     clusterId: cluster.id,
                     clusterName: cluster.name,
-                    color: cluster.color
+                    color: getClusterColor(cluster)
                 }
             };
         }
@@ -525,8 +525,10 @@ class HexGridRenderer {
                                  coord,
                                  appCoordinates
                              }) {
+        const clusterColor = getClusterColor(cluster);
+
         // Store the original color for highlighting
-        const originalColor = cluster.color;
+        const originalColor = clusterColor;
         // Calculate a lighter version of the color for hover effect
         const lighterColor = getLighterColor(originalColor);
 
@@ -547,7 +549,7 @@ class HexGridRenderer {
                         this.setHoveredApp({
                             ...coord.app,
                             clusterName: cluster.name,
-                            clusterColor: cluster.color
+                            clusterColor: clusterColor
                         });
 
                         // Show connections if the app has any
@@ -562,7 +564,7 @@ class HexGridRenderer {
                                             x: coord.x,
                                             y: coord.y,
                                             id: coord.app.id,
-                                            color: cluster.color,
+                                            color: clusterColor,
                                             name: coord.app.name
                                         },
                                         target: {

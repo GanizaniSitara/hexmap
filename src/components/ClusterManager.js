@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { getClusterColor } from '../utils/colorUtils';
 
 class ClusterManager {
     constructor({
@@ -58,7 +59,7 @@ class ClusterManager {
                 foundApp = {
                     ...app,
                     clusterName: cluster.name,
-                    clusterColor: cluster.color,
+                    clusterColor: getClusterColor(cluster),
                     clusterId: cluster.id
                 };
             }
