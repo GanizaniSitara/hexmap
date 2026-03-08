@@ -1,14 +1,24 @@
+import colorScheme from '../colorScheme';
+
+export const getClusterColor = (cluster) => {
+    if (!cluster) {
+        return colorScheme.defaults.empty;
+    }
+
+    return colorScheme.clusterColors[cluster.id] || cluster.color || colorScheme.defaults.empty;
+};
+
 // Function to determine color based on status score
 export const getStatusColor = (status) => {
     if (status === undefined || status === null) {
-        return '#808080'; // Grey for undefined/null status
+        return colorScheme.statusColors.undefined;
     }
     if (status < 33) {
-        return '#FF0000'; // Red for low status (0-32)
+        return colorScheme.statusColors.low;
     } else if (status < 66) {
-        return '#FFA500'; // Amber for medium status (33-65)
+        return colorScheme.statusColors.medium;
     } else {
-        return '#008000'; // Green for high status (66-100)
+        return colorScheme.statusColors.high;
     }
 };
 
@@ -16,14 +26,16 @@ export const getStatusColor = (status) => {
 // Expects the datum 'd' to be the 'coord' object bound in HexGridRenderer
 export const getHexagonFillColor = (d, colorMode) => {
     if (!d) {
-        return '#cccccc'; // Default grey if data is missing
+        return colorScheme.defaults.empty;
     }
-    
-    const result = (colorMode === 'Status' && d.app) 
-        ? getStatusColor(d.app.status)
-        : d.cluster 
-            ? d.cluster.color 
-            : '#cccccc';
-    
-    return result;
+
+    if (colorMode === 'Status' && d.app) {
+        return getStatusColor(d.app.status);
+    }
+
+    if (d.cluster) {
+        return getClusterColor(d.cluster);
+    }
+
+    return colorScheme.defaults.empty;
 };
