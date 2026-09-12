@@ -62,7 +62,7 @@ export const DetailPanel = ({ selectedCluster, svgRef, zoomRef }) => {
                             .transition()
                             .duration(1000)
                             .ease(d3.easeCubicOut)
-                            .call(zoomRef.current.transform, d3.zoomIdentity.scale(1));
+                            .call(zoomRef.current.transform, zoomRef.current.overviewTransform || d3.zoomIdentity.scale(1));
                     }}
                 >
                     ✕
@@ -388,6 +388,8 @@ export const ClusterLegend = ({ entityData, selectedCluster, setSelectedCluster,
             borderRadius: '8px',
             padding: '12px',
             maxWidth: '200px',
+            maxHeight: 'calc(100vh - 100px)',
+            overflowY: 'auto',
             zIndex: 1000
         }}>
             <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '14px' }}>Legend</div>

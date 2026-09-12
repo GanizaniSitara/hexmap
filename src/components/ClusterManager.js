@@ -39,7 +39,7 @@ class ClusterManager {
         this.svg.transition()
             .duration(1000)
             .ease(d3.easeCubicOut)
-            .call(this.zoomRef.current.transform, d3.zoomIdentity.scale(1));
+            .call(this.zoomRef.current.transform, this.zoomRef.current.overviewTransform || d3.zoomIdentity.scale(1));
     }
 
     getClusterApps(clusterId) {

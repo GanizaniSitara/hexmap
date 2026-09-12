@@ -1,5 +1,14 @@
 import * as d3 from 'd3';
 
+export const calculateOverviewTransform = (bounds, width, height) => {
+    if (!bounds || bounds.width <= 0 || bounds.height <= 0) return d3.zoomIdentity;
+    const scale = Math.min(1, Math.max(1, width - 160) / bounds.width, Math.max(1, height - 160) / bounds.height);
+    return d3.zoomIdentity
+        .translate(width / 2 - scale * (bounds.x + bounds.width / 2),
+            height / 2 - scale * (bounds.y + bounds.height / 2))
+        .scale(scale);
+};
+
 // Function to determine if a hexagon should be visible at current zoom level
 export const shouldHexagonBeVisible = (hexagon, zoomLevel) => {
     // All hexagons are visible at all zoom levels in the new approach

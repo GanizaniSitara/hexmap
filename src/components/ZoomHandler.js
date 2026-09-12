@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { calculateOverviewTransform } from '../utils/ZoomUtils';
 
 class ZoomHandler {
     constructor({
@@ -140,6 +141,16 @@ class ZoomHandler {
             this.topLevelOutlineGroup.attr("opacity", 0);
         }
 
+    }
+
+    fitToBounds(bounds) {
+        const overview = calculateOverviewTransform(bounds, this.width, this.height);
+        const levels = [...this.discreteZoomLevels, overview.k];
+        for (let scale = overview.k * 2; scale < 0.7; scale *= 2) levels.push(scale);
+        this.discreteZoomLevels = [...new Set(levels)].sort((left, right) => left - right);
+        this.zoom.scaleExtent([this.discreteZoomLevels[0], this.discreteZoomLevels[this.discreteZoomLevels.length - 1]]);
+        this.zoom.overviewTransform = overview;
+        this.svg.call(this.zoom.transform, overview);
     }
 
     // Accessor for the zoom behavior
