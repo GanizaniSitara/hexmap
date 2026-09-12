@@ -56,3 +56,6 @@ out/
 # Ours
 legacy/
 tmp/
+scripts/sample_data.py
+__pycache__/
+graph_layout_final.png

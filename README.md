@@ -7,6 +7,13 @@ humans being good at recognizing patterns in maps.
 
 See Live Demo: https://ganizanisitara.github.io/hexmap/
 
+## Project Application Flows
+
+The existing Python graph generator reads weighted application flows from Excel,
+discovers communities, and writes the absolute positions consumed by this viewer.
+It supports deterministic row packing, isolated applications, an optional PNG,
+and comparison with yesterday's layout. See [the flow projection guide](tools/GRAPH-PROJECTION.md).
+
 ## Features
 - Hexagonal grid
 - Zoom levels

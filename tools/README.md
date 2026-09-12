@@ -2,6 +2,12 @@
 
 Tools for generating and managing HexMap enterprise architecture visualizations.
 
+For **communities inferred from weighted application flows**, use the existing
+`scripts/graph_layout_packed.py` generator and the [flow projection guide](GRAPH-PROJECTION.md).
+The continent tools below group applications by a supplied business label instead.
+The continent generator currently enables demonstration collisions by default;
+use the flow generator when a collision-free inferred network is required.
+
 ## Overview
 
 HexMap displays enterprise applications as a geographic map where:
@@ -160,7 +166,7 @@ tools/
 ├── iterate.cmd                  # Full iteration script (Windows)
 ├── regen.cmd                    # Quick regeneration (Windows)
 ├── iterate.sh                   # Full iteration script (Linux/Mac)
-├── requirements.txt             # Python dependencies (none required)
+├── requirements.txt             # Converter and graph-projection dependencies
 └── templates/
     └── enterprise_apps.csv      # Example input data
 ```

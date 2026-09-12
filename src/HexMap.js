@@ -130,11 +130,11 @@ const HexMap = () => {
         const g = svg.append("g");
 
         // Create background
-        g.append("rect")
-            .attr("width", width * 2)
-            .attr("height", height * 2)
-            .attr("x", -width / 2)
-            .attr("y", -height / 2)
+        svg.insert("rect", ":first-child")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("x", 0)
+            .attr("y", 0)
             .attr("fill", "transparent")
             .style("cursor", "default")
             .on("click", (event) => {
@@ -144,7 +144,7 @@ const HexMap = () => {
                     svg.transition()
                         .duration(1000)
                         .ease(d3.easeCubicOut)
-                        .call(zoomRef.current.transform, d3.zoomIdentity.scale(1));
+                        .call(zoomRef.current.transform, zoomRef.current.overviewTransform || d3.zoomIdentity.scale(1));
                 }
             });
 
@@ -200,6 +200,10 @@ const HexMap = () => {
         const connectionsGroup = g.append("g")
             .attr("class", "connections-group");
         connectionsGroupRef.current = connectionsGroup;
+
+        if (entityData.projection) {
+            zoomHandler.fitToBounds(g.node().getBBox());
+        }
 
         // Restore previous zoom transform if it exists
         if (currentTransform.k !== 1 || currentTransform.x !== 0 || currentTransform.y !== 0) {
